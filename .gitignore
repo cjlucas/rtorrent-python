@@ -1,0 +1,10 @@
+/*.komodoproject
+/*.*project
+/temp
+*.pyc
+*~
+*.swp
+/epydocs
+/tests
+/__pycache__
+/logs
