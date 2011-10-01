@@ -13,4 +13,5 @@ TODO
 ----
 - Add update() functions for each of the classes (Torrent, Peer, File, Tracker)
 - Add support for get/set functions for Peer
+- Write setup.py
 - Documentation and examples
