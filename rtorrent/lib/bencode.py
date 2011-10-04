@@ -22,6 +22,8 @@
 #
 # Changelog
 # ---------
+# 2011-10-03  - Fixed: moved check for end of list at the top of the while loop
+#               in _decode_list (in case the list is empty) (Chris Lucas)
 # 2011-04-24  - Changed date format to YYYY-MM-DD for versioning, bigger
 #			   integer denotes a newer version
 #			 - Fixed a bug that would treat False as an integral type but
@@ -96,13 +98,15 @@ def _decode_list(data):
 	x = []
 	overflow = data[1:]
 	while True:										 # Loop over the data
+		if _gettype(overflow[0]) == _TYPE_END:		  # - Break if we reach the end of the list
+			return (x, overflow[1:])					#	 and return the list and overflow
+			
 		value, overflow = _decode(overflow)			 #
 		if isinstance(value, bool) or overflow == '':   # - if we have a parse error
 			return (False, False)					   #	 Die with error
 		else:										   # - Otherwise
 			x.append(value)							 #	 add the value to the list
-		if _gettype(overflow[0]) == _TYPE_END:		  # - Break if we reach the end of the list
-			return (x, overflow[1:])					#	 and return the list and overflow
+
 
 # Function to parse a bencoded list
 #   Arguments:
