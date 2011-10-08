@@ -18,19 +18,62 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from rtorrent.rpc import Method
+import rtorrent.rpc
 
 class Peer:
-    """Represents an individual peer within a L{Torrent} instance.
-    
-    @note: No retriever or modifer functions can be generated for this class
-    until I figure out how call for individual variables. Peer will still
-    provide access to variables from the multicall() call.
-    """
+    """Represents an individual peer within a L{Torrent} instance."""
     def __init__(self, _p, info_hash, **kwargs):
         self._p = _p #: X{ServerProxy} instance
         self.info_hash = info_hash #: info hash for the torrent the peer is associated with
         for k in kwargs.keys():
             setattr(self, k, kwargs.get(k, None))
 
+        self.rpc_id = "{0}:p{1}".format(self.info_hash, self.id) #: unique id to pass to rTorrent
+
     def __repr__(self):
         return("<Peer id={0}>".format(self.id))
+
+    def update(self):
+        """Refresh peer data
+        
+        @note: All fields are stored as attributes to self.
+
+        @return: None
+        """
+        multicall = rtorrent.rpc.Multicall(self._p)
+        retriever_methods = [m for m in methods if m.is_retriever()]
+        for method in retriever_methods:
+            multicall.add(method, "{0}:p{1}".format(self.info_hash, self.id))
+
+        result = multicall.call()
+        for m, r in zip(retriever_methods, result):
+            setattr(self, m.varname, rtorrent.rpc.process_result(m, r))
+
+methods = [
+    # RETRIEVERS
+    Method(Peer, 'is_preferred', 'p.is_preferred', None, boolean=True),
+    Method(Peer, 'get_down_rate', 'p.get_down_rate', None),
+    Method(Peer, 'is_unwanted', 'p.is_unwanted', None, boolean=True),
+    Method(Peer, 'get_peer_total', 'p.get_peer_total', None),
+    Method(Peer, 'get_peer_rate', 'p.get_peer_rate', None),
+    Method(Peer, 'get_port', 'p.get_port', None),
+    Method(Peer, 'is_snubbed', 'p.is_snubbed', None, boolean=True),
+    Method(Peer, 'get_id_html', 'p.get_id_html', None),
+    Method(Peer, 'get_up_rate', 'p.get_up_rate', None),
+    Method(Peer, 'banned', 'p.banned', None),
+    Method(Peer, 'get_completed_percent', 'p.get_completed_percent', None),
+    Method(Peer, 'completed_percent', 'p.completed_percent', None),
+    Method(Peer, 'get_id', 'p.get_id', None),
+    Method(Peer, 'is_obfuscated', 'p.is_obfuscated', None, boolean=True),
+    Method(Peer, 'get_down_total', 'p.get_down_total', None),
+    Method(Peer, 'get_client_version', 'p.get_client_version', None),
+    Method(Peer, 'get_address', 'p.get_address', None),
+    Method(Peer, 'is_incoming', 'p.is_incoming', None, boolean=True),
+    Method(Peer, 'is_encrypted', 'p.is_encrypted', None, boolean=True),
+    Method(Peer, 'get_options_str', 'p.get_options_str', None),
+    Method(Peer, 'client_version', 'p.client_version', None),
+    Method(Peer, 'get_up_total', 'p.get_up_total', None),
+
+    # MODIFIERS
+]

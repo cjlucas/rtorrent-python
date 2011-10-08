@@ -1,3 +1,16 @@
+v0.2.0 (October 07, 2011)
+-------------------------
+- Added: support for Peer rpc methods
+- Added: update methods for Peer, Tracker, Torrent and File classes
+- Added: int to boolean type casting on return values (only occurs if the Method's boolean flag is True)
+- Added: poll method for RTorrent class
+- Added: Multicall support (see rtorrent.rpc.Multicall)
+- Added: minimum rTorrent version check
+
+- Improvement: Completely rewrote how RPC methods are used
+
+- Removed: list_to_dict function in rtorrent.common (no longer needed)
+
 v0.1.0 (October 01, 2011)
 -------------------------
 - Intial release

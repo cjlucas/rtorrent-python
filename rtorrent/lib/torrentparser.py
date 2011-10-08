@@ -24,8 +24,8 @@ import re
 import rtorrent.lib.bencode as bencode
 import hashlib
 
-if _py3: from urllib.request import urlopen #@UnresolvedImport
-else: from urllib2 import urlopen #@UnresolvedImport
+if _py3: from urllib.request import urlopen #@UnresolvedImport @UnusedImport
+else: from urllib2 import urlopen #@UnresolvedImport @Reimport
 
 class TorrentParser():
     def __init__(self, torrent):
@@ -84,15 +84,14 @@ class TorrentParser():
 
     def _calc_info_hash(self):
         self.info_hash = None
-        for k in ["info", b"info"]:
-            if k in self._torrent_decoded.keys():
-                info_dict = self._torrent_decoded[k]
-                break
+        if "info" in self._torrent_decoded.keys():
+                info_dict = self._torrent_decoded["info"]
+                self.info_hash = hashlib.sha1(bencode.encode(info_dict)).hexdigest().upper()
 
-        self.info_hash = hashlib.sha1(bencode.encode(info_dict)).hexdigest().upper()
+        return(self.info_hash)
 
     def _parse_torrent(self):
         for k in self._torrent_decoded:
-            setattr(self, str(k, "utf-8"), self._torrent_decoded[k])
+            setattr(self, k, self._torrent_decoded[k])
 
         self._calc_info_hash()

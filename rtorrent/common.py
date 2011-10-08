@@ -18,15 +18,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import re
 import sys
 
 _py3 = sys.version_info > (3,)
-
-def int_to_bool(value):
-    """Pythonifys boolean values returned by xmlrpc"""
-    if value == 1: return(True)
-    elif value == 0: return(False)
 
 def bool_to_int(value):
     """Translates python booleans to RPC-safe integers"""
@@ -48,47 +42,6 @@ def cmd_exists(cmds_list, cmd):
 
     return(cmd in cmds_list)
 
-def get_varname(rpc_call):
-    """Transform function into variable name.
-    
-    @note: Example: if the function is p.get_down_rate, the variable name will be
-    "down_rate", and the result of the p.get_down_rate= call will be assigned to it.
-    """
-    # extract variable name from xmlrpc func name
-    r = re.search("([ptdf]\.|get\_|is\_|set\_)+([^=]*)", rpc_call, re.I)
-    if r: return(r.groups()[-1])
-    else: return(None)
-
-
-def list_to_dict(func_list, results):
-    """
-    Assign given result to transformed variable name.
-        
-    @param func_list: list of xmlrpc functions
-    @type func_list: list
-    
-    @param results: results from multicall()
-    @type results: list
-    
-    @return: dict 
-             - key: transformed variable 
-             - value: corresponding result
-
-    """
-    func_dict = {}
-
-    # the order of func_list and results should be in sync
-    for i, f in enumerate(func_list):
-        # extract variable name from xmlrpc func name
-        var_name = get_varname(f)
-        if var_name:
-            # "is" functions should return True/False, not an int
-            if re.search("^[ptdf]\.is_", f, re.I): value = int_to_bool(results[i])
-            else: value = results[i]
-            func_dict[var_name] = value
-
-    return(func_dict)
-
 def find_torrent(info_hash, torrent_list):
     """Find torrent file in given list of Torrent classes
     
@@ -107,4 +60,4 @@ def find_torrent(info_hash, torrent_list):
 
 def is_valid_port(port):
     """Check if given port is valid"""
-    return(0 < int(port) < 65535)
+    return(0 <= int(port) <= 65535)

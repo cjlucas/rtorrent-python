@@ -18,34 +18,38 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from rtorrent.common import _py3, cmd_exists, list_to_dict, find_torrent, \
-                            is_valid_port, bool_to_int
-from rtorrent.file import File
-from rtorrent.peer import Peer
-from rtorrent.torrent import Torrent
+from rtorrent.common import _py3, cmd_exists, find_torrent, \
+    is_valid_port, bool_to_int
 from rtorrent.lib.torrentparser import TorrentParser
-from rtorrent.tracker import Tracker
-import rtorrent.rpc.methods
+from rtorrent.rpc import Method
+from rtorrent.torrent import Torrent
+import os.path
+import rtorrent.rpc #@UnresolvedImport
 import sys
 import time
-import os.path
+
 
 if _py3:
     import xmlrpc.client as xmlrpclib #@UnresolvedImport
     from urllib.request import urlopen #@UnresolvedImport
 else:
-    import xmlrpclib #@UnresolvedImport
-    from urllib2 import urlopen #@UnresolvedImport
+    import xmlrpclib #@UnresolvedImport @Reimport
+    from urllib2 import urlopen #@UnresolvedImport @Reimport
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Chris Lucas"
 __contact__ = "cjlucas07@gmail.com"
 __license__ = "MIT"
 
+MIN_RTORRENT_VERSION = (0, 8, 1)
+MIN_RTORRENT_VERSION_STR = ".".join([str(n) for n in MIN_RTORRENT_VERSION])
+
 
 class RTorrent:
     """ Create a new rTorrent connection """
+    rpc_prefix = None
+
     def __init__(self, url, _verbose=False):
         self.url = url #: From X{__init__(self, url)}
         self._verbose = _verbose
@@ -58,7 +62,10 @@ class RTorrent:
         self._connect()
         if self._connected:
             self._check_commands()
-            self.get_client_info()
+            self.update()
+            assert self._meets_version_requirement() is True, \
+                "Error: Minimum rTorrent version required is {0}".format(
+                                                    MIN_RTORRENT_VERSION_STR)
             self.get_torrents()
 
     def _connect(self):
@@ -79,43 +86,31 @@ class RTorrent:
             sys.stderr.write("*** Exception caught: ResponseError")
 
     def _check_commands(self):
-        """Check method lists from rtorrent.functions and 
-        remove functions that don't exist
-        """
-        """
-        for k in rtorrent.rpc.methods.retrievers:
-            rtorrent.rpc.methods.retrievers[k] = \
-            [f for f in rtorrent.rpc.methods.retrievers[k]\
-              if cmd_exists(self.get_commands(), f)]
-        """
-        for k in rtorrent.rpc.methods.retrievers.keys():
-            # create temp copy to prevent 
-            # "dictionary changed size during iteration" error
-            temp_dict = dict(rtorrent.rpc.methods.retrievers[k])
-            for f in temp_dict:
-                rpc_call = temp_dict[f][0]
-                if not cmd_exists(self.get_commands(), rpc_call):
-                    del rtorrent.rpc.methods.retrievers[k][f]
+        """Remove non-existing methods from RPC method lists"""
+        for method_list in _all_methods_list:
+            del_index = []
+            for method in method_list:
+                if method.rpc_call not in self.get_commands():
+                    del_index.append(method_list.index(method))
+
+            # reverse sort del_index so index positions don't get altered
+            for i in sorted(del_index, reverse=True): del method_list[i]
+
+    def _meets_version_requirement(self):
+        """Check if rTorrent version is meets requirements"""
+        if hasattr(self, "client_version"):
+            version = tuple([int(i) for i in self.client_version.split(".")])
+            return(version >= MIN_RTORRENT_VERSION)
+        else:
+            return(False)
 
     def get_commands(self):
-        return(self._rpc_methods)
-
-    def get_client_info(self):
-        """Get rTorrent client info
-
-        @note: All fields are stored as attributes to self
-
-        @return: None
+        """Get list of raw RPC commands supported by rTorrent
+        
+        @return: raw RPC commands
+        @rtype: list
         """
-        GENERAL_FUNCS = rtorrent.rpc.methods.retrievers["general"]
-        # create MultiCall object
-        multicall = xmlrpclib.MultiCall(self._p)
-        for f in GENERAL_FUNCS:
-            getattr(multicall, f)()
-
-        results = multicall()
-        results = list_to_dict(GENERAL_FUNCS, tuple(results))
-        for r in results: setattr(self, r, results[r])
+        return(self._rpc_methods)
 
     def get_torrents(self, view="main"):
         """Get list of all torrents in specified view
@@ -125,20 +120,30 @@ class RTorrent:
 
         @todo: add validity check for specified view
         """
-        TORRENT_FUNCS = rtorrent.rpc.methods.retrievers["torrent"]
-        results = self._p.d.multicall(view, "d.get_hash=",
-                                      *[TORRENT_FUNCS[f][0] + "=" for f in TORRENT_FUNCS])
         self.torrents = []
-        self.download_list = []
-        for r in results:
-            self.download_list.append(r[0])
-            self.torrents.append(Torrent(self._p, info_hash=r[0],
-                                        **list_to_dict(TORRENT_FUNCS.keys(), r[1:])))
+        methods = rtorrent.torrent.methods
+        retriever_methods = [m for m in methods if m.is_retriever()]
+
+        m = rtorrent.rpc.Multicall(self._p)
+        m.add("d.multicall", view, "d.get_hash=",
+                *[method.rpc_call + "=" for method in retriever_methods])
+
+        results = m.call()[0] # only sent one call, only need first result
+
+        for result in results:
+            results_dict = {}
+            # build results_dict
+            for m, r in zip(retriever_methods, result[1:]): # result[0] is the info_hash
+                results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
+
+            self.torrents.append(
+                    Torrent(self._p, info_hash=result[0], **results_dict)
+            )
 
         return(self.torrents)
 
     def _get_load_function(self, file_type, start, verbose):
-        """Determine correct "load torrent" rpc function"""
+        """Determine correct "load torrent" RPC method"""
         func_name = None
         if file_type == "url":
             # url strings can be input directly
@@ -257,92 +262,251 @@ class RTorrent:
         assert is_valid_port(port), "Valid port range is 0-65535"
         self.dht_port = self._p.set_dht_port(port)
 
-    def set_check_hash(self, toggle):
-        """Enable/Disable hash checking on finished torrents
-        
-        @param toggle: True to enable, False to disable
-        @type toggle: bool
-        """
-        if value is True: toggle = 1
-        else: toggle = 0
+    def enable_check_hash(self):
+        """Alias for set_check_hash(True)"""
+        self.set_check_hash(True)
 
-        self.check_hash = self._p.set_hash_check(toggle)
-
-    def enable_hash_check(self):
-        """Alias for set_hash_check(True)"""
-        self.check_hash = self._p.set_hash_check(1)
-
-    def disable_hash_check(self):
-        """Alias for set_hash_check(False)"""
-        self.hash_check = self._p.set_hash_check(0)
+    def disable_check_hash(self):
+        """Alias for set_check_hash(False)"""
+        self.set_check_hash(False)
 
     def poll(self):
         """ poll rTorrent to get latest torrent/peer/tracker/file information 
         
-        @note: This will essentially refresh all of the rTorrent data, can be 
-        slow if working with a remote rTorrent connection
+        @note: This essentially refreshes every aspect of the rTorrent
+        connection, so it can be very slow if working with a remote 
+        connection that has a lot of torrents loaded.
         
         @return: None
         """
+        self.update()
         torrents = self.get_torrents()
         for t in torrents:
-            t.get_peers()
-            # not finished
+            t.poll()
 
+    def update(self):
+        """Refresh rTorrent client info
 
-def _build_modifier_functions(class_name, dict_key):
+        @note: All fields are stored as attributes to self.
+
+        @return: None
+        """
+        multicall = rtorrent.rpc.Multicall(self._p)
+        retriever_methods = [m for m in methods if m.is_retriever()]
+        for method in retriever_methods:
+            multicall.add(method)
+
+        result = multicall.call()
+        for m, r in zip(retriever_methods, result):
+            setattr(self, m.varname, rtorrent.rpc.process_result(m, r))
+
+def _build_rpc_methods(method_list):
     """Build glorified aliases to raw RPC methods"""
-    for f in rtorrent.rpc.methods.modifiers[dict_key]:
-        rpc_call = rtorrent.rpc.methods.modifiers[dict_key][f][0]
-        doc_string = rtorrent.rpc.methods.modifiers[dict_key][f][1]
+    for m in method_list:
+        class_name = m.class_name.__name__
 
-        if dict_key == "general":
-            #caller = lambda self, arg, _fname = rpc_call:\
-            #     getattr(self._p, _fname)(bool_to_int(arg))
-            caller = lambda self, arg, _fname = rpc_call:\
-                rtorrent.rpc.handle_modifier_method(self, _fname,
-                                                    bool_to_int(arg))
-        elif dict_key == "torrent":
-            #caller = lambda self, arg, _fname = rpc_call:\
-            #     getattr(self._p, _fname)(self.info_hash, bool_to_int(arg))
-            caller = lambda self, arg, _fname = rpc_call:\
-                rtorrent.rpc.handle_modifier_method(self, _fname,
-                                                    self.info_hash,
-                                                    bool_to_int(arg))
-        elif dict_key in ["tracker", "file"]:
-            #caller = lambda self, arg, _fname = rpc_call:\
-            #     getattr(self._p, _fname)(self.info_hash, self.index, bool_to_int(arg))
-            caller = lambda self, arg, _fname = rpc_call:\
-                 rtorrent.rpc.handle_modifier_method(self, _fname,
-                                                     self.info_hash, self.index,
-                                                     boot_to_int(arg))
+        if class_name == "RTorrent":
+            caller = lambda self, arg = None, method = m:\
+                rtorrent.rpc.call_method(self, method, bool_to_int(arg))
+        elif class_name == "Torrent":
+            caller = lambda self, arg = None, method = m:\
+                rtorrent.rpc.call_method(self, method, self.rpc_id,
+                                         bool_to_int(arg))
+        elif class_name in ["Tracker", "File"]:
+            caller = lambda self, arg = None, method = m:\
+                rtorrent.rpc.call_method(self, method, self.rpc_id,
+                                         bool_to_int(arg))
 
-        if doc_string is not None: caller.__doc__ = doc_string
-        setattr(class_name, f, caller)
+        elif class_name == "Peer":
+            caller = lambda self, arg = None, method = m:\
+                rtorrent.rpc.call_method(self, method, self.rpc_id,
+                                         bool_to_int(arg))
 
-def _build_retriever_functions(class_name, dict_key):
-    """Build glorified aliases to raw RPC methods"""
-    for f in rtorrent.rpc.methods.retrievers[dict_key]:
-        rpc_call = rtorrent.rpc.methods.retrievers[dict_key][f][0]
-        doc_string = rtorrent.rpc.methods.retrievers[dict_key][f][1]
+        if m.docstring is not None: caller.__doc__ = m.docstring
 
-        if dict_key == "general":
-            caller = lambda self, _fname = rpc_call:\
-                rtorrent.rpc.handle_retriever_method(self, _fname)
-        elif dict_key == "torrent":
-            caller = lambda self, _fname = rpc_call:\
-                rtorrent.rpc.handle_retriever_method(self, _fname,
-                                                     self.info_hash)
-        elif dict_key in ["tracker", "file"]:
-            caller = lambda self, _fname = rpc_call:\
-                rtorrent.rpc.handle_retriever_method(self, _fname,
-                                                     self.info_hash, self.index)
+        setattr(m.class_name, m.method_name, caller)
 
-        if doc_string is not None: caller.__doc__ = doc_string
-        setattr(class_name, f, caller)
+def _build_class_methods(class_obj):
+    # multicall add class
+    caller = lambda self, multicall, method, *args:\
+        multicall.add(method, self.rpc_id, *args)
 
-for c in ((RTorrent, "general"), (Torrent, "torrent"),
-          (Tracker, "tracker"), (File, "file")):
-    # TODO: add support for File and Peer functions
-    _build_modifier_functions(c[0], c[1])
-    _build_retriever_functions(c[0], c[1])
+    caller.__doc__ = """Same as Multicall.add(), but with automatic inclusion
+                        of the rpc_id
+                        
+                        @param multicall: A L{Multicall} instance
+                        @type: multicall: Multicall
+                        
+                        @param method: L{Method} instance or raw rpc method
+                        @type: Method or str
+                        
+                        @param args: optional arguments to pass
+                        """
+    setattr(class_obj, "multicall_add", caller)
+
+methods = [
+    # RETRIEVERS
+    Method(RTorrent, 'get_xmlrpc_size_limit', 'get_xmlrpc_size_limit', None),
+    Method(RTorrent, 'get_proxy_address', 'get_proxy_address', None),
+    Method(RTorrent, 'get_split_suffix', 'get_split_suffix', None),
+    Method(RTorrent, 'get_upload_rate', 'get_upload_rate', None),
+    Method(RTorrent, 'get_max_memory_usage', 'get_max_memory_usage', None),
+    Method(RTorrent, 'get_max_open_files', 'get_max_open_files', None),
+    Method(RTorrent, 'get_min_peers_seed', 'get_min_peers_seed', None),
+    Method(RTorrent, 'get_use_udp_trackers', 'get_use_udp_trackers', None),
+    Method(RTorrent, 'get_preload_min_size', 'get_preload_min_size', None),
+    Method(RTorrent, 'get_max_uploads', 'get_max_uploads', None),
+    Method(RTorrent, 'get_max_peers', 'get_max_peers', None),
+    Method(RTorrent, 'get_timeout_sync', 'get_timeout_sync', None),
+    Method(RTorrent, 'get_receive_buffer_size', 'get_receive_buffer_size', None),
+    Method(RTorrent, 'get_split_file_size', 'get_split_file_size', None),
+    Method(RTorrent, 'get_dht_throttle', 'get_dht_throttle', None),
+    Method(RTorrent, 'get_max_peers_seed', 'get_max_peers_seed', None),
+    Method(RTorrent, 'get_min_peers', 'get_min_peers', None),
+    Method(RTorrent, 'get_tracker_numwant', 'get_tracker_numwant', None),
+    Method(RTorrent, 'get_max_open_sockets', 'get_max_open_sockets', None),
+    Method(RTorrent, 'get_session', 'get_session', None),
+    Method(RTorrent, 'get_ip', 'get_ip', None),
+    Method(RTorrent, 'get_scgi_dont_route', 'get_scgi_dont_route', None),
+    Method(RTorrent, 'get_hash_read_ahead', 'get_hash_read_ahead', None),
+    Method(RTorrent, 'get_http_cacert', 'get_http_cacert', None),
+    Method(RTorrent, 'get_dht_port', 'get_dht_port', None),
+    Method(RTorrent, 'get_handshake_log', 'get_handshake_log', None),
+    Method(RTorrent, 'get_preload_type', 'get_preload_type', None),
+    Method(RTorrent, 'get_max_open_http', 'get_max_open_http', None),
+    Method(RTorrent, 'get_http_capath', 'get_http_capath', None),
+    Method(RTorrent, 'get_max_downloads_global', 'get_max_downloads_global', None),
+    Method(RTorrent, 'get_name', 'get_name', None),
+    Method(RTorrent, 'get_session_on_completion', 'get_session_on_completion', None),
+    Method(RTorrent, 'get_download_rate', 'get_download_rate', None),
+    Method(RTorrent, 'get_down_total', 'get_down_total', None),
+    Method(RTorrent, 'get_up_rate', 'get_up_rate', None),
+    Method(RTorrent, 'get_hash_max_tries', 'get_hash_max_tries', None),
+    Method(RTorrent, 'get_peer_exchange', 'get_peer_exchange', None),
+    Method(RTorrent, 'get_down_rate', 'get_down_rate', None),
+    Method(RTorrent, 'get_connection_seed', 'get_connection_seed', None),
+    Method(RTorrent, 'get_http_proxy', 'get_http_proxy', None),
+    Method(RTorrent, 'get_stats_preloaded', 'get_stats_preloaded', None),
+    Method(RTorrent, 'get_timeout_safe_sync', 'get_timeout_safe_sync', None),
+    Method(RTorrent, 'get_hash_interval', 'get_hash_interval', None),
+    Method(RTorrent, 'get_port_random', 'get_port_random', None),
+    Method(RTorrent, 'get_directory', 'get_directory', None),
+    Method(RTorrent, 'get_port_open', 'get_port_open', None),
+    Method(RTorrent, 'get_max_file_size', 'get_max_file_size', None),
+    Method(RTorrent, 'get_stats_not_preloaded', 'get_stats_not_preloaded', None),
+    Method(RTorrent, 'get_memory_usage', 'get_memory_usage', None),
+    Method(RTorrent, 'get_connection_leech', 'get_connection_leech', None),
+    Method(RTorrent, 'get_check_hash', 'get_check_hash', None, boolean=True),
+    Method(RTorrent, 'get_session_lock', 'get_session_lock', None),
+    Method(RTorrent, 'get_preload_required_rate', 'get_preload_required_rate', None),
+    Method(RTorrent, 'get_max_uploads_global', 'get_max_uploads_global', None),
+    Method(RTorrent, 'get_send_buffer_size', 'get_send_buffer_size', None),
+    Method(RTorrent, 'get_port_range', 'get_port_range', None),
+    Method(RTorrent, 'get_max_downloads_div', 'get_max_downloads_div', None),
+    Method(RTorrent, 'get_max_uploads_div', 'get_max_uploads_div', None),
+    Method(RTorrent, 'get_safe_sync', 'get_safe_sync', None),
+   #Method(RTorrent, 'get_log.tracker', 'get_log.tracker', None),
+    Method(RTorrent, 'get_bind', 'get_bind', None),
+    Method(RTorrent, 'get_up_total', 'get_up_total', None),
+    Method(RTorrent, 'get_client_version', 'system.client_version', None),
+    Method(RTorrent, 'get_library_version', 'system.library_version', None),
+
+    # MODIFIERS
+    Method(RTorrent, 'set_http_proxy', 'set_http_proxy', None),
+    Method(RTorrent, 'set_max_memory_usage', 'set_max_memory_usage', None),
+    Method(RTorrent, 'set_max_file_size', 'set_max_file_size', None),
+    Method(RTorrent, 'set_bind', 'set_bind',
+           """Set address bind
+           
+           @param arg: ip address
+           @type arg: str
+           """),
+    Method(RTorrent, 'set_upload_limit', 'set_upload_rate',
+           """Set global upload limit (in bytes)
+           
+           @param arg: speed limit
+           @type arg: int
+           """),
+    Method(RTorrent, 'set_port_random', 'set_port_random', None),
+    Method(RTorrent, 'set_connection_leech', 'set_connection_leech', None),
+    Method(RTorrent, 'set_tracker_numwant', 'set_tracker_numwant', None),
+    Method(RTorrent, 'set_max_peers', 'set_max_peers', None),
+    Method(RTorrent, 'set_min_peers', 'set_min_peers', None),
+    Method(RTorrent, 'set_max_uploads_div', 'set_max_uploads_div', None),
+    Method(RTorrent, 'set_max_open_files', 'set_max_open_files', None),
+    Method(RTorrent, 'set_max_downloads_global', 'set_max_downloads_global', None),
+    Method(RTorrent, 'set_session_lock', 'set_session_lock', None),
+    Method(RTorrent, 'set_session', 'set_session', None),
+    Method(RTorrent, 'set_split_suffix', 'set_split_suffix', None),
+    Method(RTorrent, 'set_hash_interval', 'set_hash_interval', None),
+    Method(RTorrent, 'set_handshake_log', 'set_handshake_log', None),
+    Method(RTorrent, 'set_port_range', 'set_port_range', None),
+    Method(RTorrent, 'set_min_peers_seed', 'set_min_peers_seed', None),
+    Method(RTorrent, 'set_scgi_dont_route', 'set_scgi_dont_route', None),
+    Method(RTorrent, 'set_preload_min_size', 'set_preload_min_size', None),
+    Method(RTorrent, 'set_log.tracker', 'set_log.tracker', None),
+    Method(RTorrent, 'set_max_uploads_global', 'set_max_uploads_global', None),
+    Method(RTorrent, 'set_download_limit', 'set_download_rate',
+           """Set global download limit (in bytes)
+           
+           @param arg: speed limit
+           @type arg: int
+           """),
+    Method(RTorrent, 'set_preload_required_rate', 'set_preload_required_rate', None),
+    Method(RTorrent, 'set_hash_read_ahead', 'set_hash_read_ahead', None),
+    Method(RTorrent, 'set_max_peers_seed', 'set_max_peers_seed', None),
+    Method(RTorrent, 'set_max_uploads', 'set_max_uploads', None),
+    Method(RTorrent, 'set_session_on_completion', 'set_session_on_completion', None),
+    Method(RTorrent, 'set_max_open_http', 'set_max_open_http', None),
+    Method(RTorrent, 'set_directory', 'set_directory', None),
+    Method(RTorrent, 'set_http_cacert', 'set_http_cacert', None),
+    Method(RTorrent, 'set_dht_throttle', 'set_dht_throttle', None),
+    Method(RTorrent, 'set_hash_max_tries', 'set_hash_max_tries', None),
+    Method(RTorrent, 'set_proxy_address', 'set_proxy_address', None),
+    Method(RTorrent, 'set_split_file_size', 'set_split_file_size', None),
+    Method(RTorrent, 'set_receive_buffer_size', 'set_receive_buffer_size', None),
+    Method(RTorrent, 'set_use_udp_trackers', 'set_use_udp_trackers', None),
+    Method(RTorrent, 'set_connection_seed', 'set_connection_seed', None),
+    Method(RTorrent, 'set_xmlrpc_size_limit', 'set_xmlrpc_size_limit', None),
+    Method(RTorrent, 'set_xmlrpc_dialect', 'set_xmlrpc_dialect', None),
+    Method(RTorrent, 'set_safe_sync', 'set_safe_sync', None),
+    Method(RTorrent, 'set_http_capath', 'set_http_capath', None),
+    Method(RTorrent, 'set_send_buffer_size', 'set_send_buffer_size', None),
+    Method(RTorrent, 'set_max_downloads_div', 'set_max_downloads_div', None),
+    Method(RTorrent, 'set_name', 'set_name', None),
+    Method(RTorrent, 'set_port_open', 'set_port_open', None),
+    Method(RTorrent, 'set_timeout_sync', 'set_timeout_sync', None),
+    Method(RTorrent, 'set_peer_exchange', 'set_peer_exchange', None),
+    Method(RTorrent, 'set_ip', 'set_ip',
+           """Set IP
+           
+           @param arg: ip address
+           @type arg: str
+           """),
+    Method(RTorrent, 'set_timeout_safe_sync', 'set_timeout_safe_sync', None),
+    Method(RTorrent, 'set_preload_type', 'set_preload_type', None),
+    Method(RTorrent, 'set_check_hash', 'set_check_hash',
+           """Enable/Disable hash checking on finished torrents
+        
+            @param arg: True to enable, False to disable
+            @type arg: bool
+            """, boolean=True),
+    # test if RTorrent._check_commands works
+    Method(RTorrent, 'fake_method', 'get_fake_method', None),
+    Method(RTorrent, 'fake_method_dos', 'get_fake_method_dos', None),
+]
+
+_all_methods_list = [methods,
+                    rtorrent.file.methods,
+                    rtorrent.torrent.methods,
+                    rtorrent.tracker.methods,
+                    rtorrent.peer.methods,
+]
+
+for l in _all_methods_list: _build_rpc_methods(l)
+
+for c in [rtorrent.file.File,
+          rtorrent.torrent.Torrent,
+          rtorrent.tracker.Tracker,
+          rtorrent.peer.Peer]:
+    _build_class_methods(c)
