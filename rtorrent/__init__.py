@@ -121,6 +121,7 @@ class RTorrent:
         @todo: add validity check for specified view
         """
         self.torrents = []
+        self.download_list = []
         methods = rtorrent.torrent.methods
         retriever_methods = [m for m in methods if m.is_retriever()]
 
@@ -136,6 +137,7 @@ class RTorrent:
             for m, r in zip(retriever_methods, result[1:]): # result[0] is the info_hash
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
+            self.download_list.append(result[0])
             self.torrents.append(
                     Torrent(self._p, info_hash=result[0], **results_dict)
             )
