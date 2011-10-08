@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 import os, sys
 
 version = __import__('rtorrent').__version__
-print(version)
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
