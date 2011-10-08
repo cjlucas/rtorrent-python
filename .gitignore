@@ -4,7 +4,6 @@
 *.pyc
 *~
 *.swp
-/docs
 /tests
 /__pycache__
 /logs
