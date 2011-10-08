@@ -12,8 +12,12 @@ REQUIREMENTS
 INSTALLATION
 ------------
 
+If you're downloading the source:
+
 ```$ python setup.py install```
-or
+
+Or you can install directly from PyPI:
+
 ```$ easy_install rtorrent-python```
 
 TODO
