@@ -13,6 +13,8 @@ INSTALLATION
 ------------
 
 ```$ python setup.py install```
+or
+```$ easy_install rtorrent-python```
 
 TODO
 ----
