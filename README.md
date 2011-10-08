@@ -17,5 +17,4 @@ INSTALLATION
 TODO
 ----
 - Logging support
-- Write setup.py
 - Documentation and examples
