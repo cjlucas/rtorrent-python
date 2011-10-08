@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>rtorrent.tracker</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="rtorrent-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="rtorrent-module.html">Package&nbsp;rtorrent</a> ::
+        Module&nbsp;tracker
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="rtorrent.tracker-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="rtorrent.tracker-module.html">Module rtorrent.tracker</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2011 Chris Lucas, &lt;cjlucas07@gmail.com&gt;</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment"># Permission is hereby granted, free of charge, to any person obtaining</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># a copy of this software and associated documentation files (the</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"># "Software"), to deal in the Software without restriction, including</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># without limitation the rights to use, copy, modify, merge, publish,</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment"># distribute, sublicense, and/or sell copies of the Software, and to</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># permit persons to whom the Software is furnished to do so, subject to</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment"># the following conditions:</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"># The above copyright notice and this permission notice shall be</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment"># included in all copies or substantial portions of the Software.</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment"># THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment"># EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-comment"># MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment"># NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-comment"># LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-comment"># OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-comment"># WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package rtorrent=rtorrent-module.html"><a title="rtorrent" class="py-name" href="#" onclick="return doclink('link-0', 'rtorrent', 'link-0');">rtorrent</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Package rtorrent.rpc=rtorrent.rpc-module.html"><a title="rtorrent.rpc" class="py-name" href="#" onclick="return doclink('link-1', 'rpc', 'link-1');">rpc</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class rtorrent.rpc.Method=rtorrent.rpc.Method-class.html"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-2', 'Method', 'link-2');">Method</a></tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-3" class="py-name"><a title="rtorrent" class="py-name" href="#" onclick="return doclink('link-3', 'rtorrent', 'link-0');">rtorrent</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name"><a title="rtorrent.rpc" class="py-name" href="#" onclick="return doclink('link-4', 'rpc', 'link-1');">rpc</a></tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"> </tt>
+<a name="Tracker"></a><div id="Tracker-def"><a name="L24"></a><tt class="py-lineno">24</tt> <a class="py-toggle" href="#" id="Tracker-toggle" onclick="return toggle('Tracker');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="rtorrent.tracker.Tracker-class.html">Tracker</a><tt class="py-op">:</tt> </tt>
+</div><div id="Tracker-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="Tracker-expanded"><a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line">    <tt class="py-docstring">"""Represents an individual tracker within a L{Torrent} instance."""</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"> </tt>
+<a name="Tracker.__init__"></a><div id="Tracker.__init__-def"><a name="L27"></a><tt class="py-lineno">27</tt> <a class="py-toggle" href="#" id="Tracker.__init__-toggle" onclick="return toggle('Tracker.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="rtorrent.tracker.Tracker-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">_p</tt><tt class="py-op">,</tt> <tt class="py-param">info_hash</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tracker.__init__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="Tracker.__init__-expanded"><a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_p</tt> <tt class="py-op">=</tt> <tt class="py-name">_p</tt> <tt class="py-comment">#: X{ServerProxy} instance</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">info_hash</tt> <tt class="py-op">=</tt> <tt class="py-name">info_hash</tt> <tt class="py-comment">#: info hash for the torrent using this tracker</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">k</tt> <tt class="py-keyword">in</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">keys</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">            <tt class="py-name">setattr</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">k</tt><tt class="py-op">,</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">k</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line"> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">        <tt class="py-comment"># for clarity's sake...</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">index</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">group</tt> <tt class="py-comment">#: position of tracker within the torrent's tracker list</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">rpc_id</tt> <tt class="py-op">=</tt> <tt class="py-string">"{0}:t{1}"</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">info_hash</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">index</tt><tt class="py-op">)</tt> <tt class="py-comment">#: unique id to pass to rTorrent</tt> </tt>
+</div><a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line"> </tt>
+<a name="Tracker.__repr__"></a><div id="Tracker.__repr__-def"><a name="L37"></a><tt class="py-lineno">37</tt> <a class="py-toggle" href="#" id="Tracker.__repr__-toggle" onclick="return toggle('Tracker.__repr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="rtorrent.tracker.Tracker-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tracker.__repr__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="Tracker.__repr__-expanded"><a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt><tt class="py-op">(</tt><tt class="py-string">"&lt;Tracker index={0}, url=\"{1}\"&gt;"</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">index</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">url</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line"> </tt>
+<a name="Tracker.enable"></a><div id="Tracker.enable-def"><a name="L40"></a><tt class="py-lineno">40</tt> <a class="py-toggle" href="#" id="Tracker.enable-toggle" onclick="return toggle('Tracker.enable');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="rtorrent.tracker.Tracker-class.html#enable">enable</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tracker.enable-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="Tracker.enable-expanded"><a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">        <tt class="py-docstring">"""Alias for set_enabled("yes")"""</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method rtorrent.tracker.Tracker.set_enabled()=rtorrent.tracker.Tracker-class.html#set_enabled"><a title="rtorrent.tracker.Tracker.set_enabled" class="py-name" href="#" onclick="return doclink('link-5', 'set_enabled', 'link-5');">set_enabled</a></tt><tt class="py-op">(</tt><tt class="py-string">"yes"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="Tracker.disable"></a><div id="Tracker.disable-def"><a name="L43"></a><tt class="py-lineno">43</tt> <a class="py-toggle" href="#" id="Tracker.disable-toggle" onclick="return toggle('Tracker.disable');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="rtorrent.tracker.Tracker-class.html#disable">disable</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tracker.disable-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="Tracker.disable-expanded"><a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">        <tt class="py-docstring">"""Alias for set_enabled("no")"""</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="rtorrent.tracker.Tracker.set_enabled" class="py-name" href="#" onclick="return doclink('link-6', 'set_enabled', 'link-5');">set_enabled</a></tt><tt class="py-op">(</tt><tt class="py-string">"no"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line"> </tt>
+<a name="Tracker.update"></a><div id="Tracker.update-def"><a name="L47"></a><tt class="py-lineno">47</tt> <a class="py-toggle" href="#" id="Tracker.update-toggle" onclick="return toggle('Tracker.update');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="rtorrent.tracker.Tracker-class.html#update">update</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Tracker.update-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="Tracker.update-expanded"><a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">        <tt class="py-docstring">"""Refresh tracker data</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"><tt class="py-docstring">        </tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line"><tt class="py-docstring">        @note: All fields are stored as attributes to self.</tt> </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line"><tt class="py-docstring">        @return: None</tt> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">        <tt class="py-name">multicall</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name"><a title="rtorrent" class="py-name" href="#" onclick="return doclink('link-7', 'rtorrent', 'link-0');">rtorrent</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="rtorrent.rpc" class="py-name" href="#" onclick="return doclink('link-8', 'rpc', 'link-1');">rpc</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Class rtorrent.rpc.Multicall=rtorrent.rpc.Multicall-class.html"><a title="rtorrent.rpc.Multicall" class="py-name" href="#" onclick="return doclink('link-9', 'Multicall', 'link-9');">Multicall</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_p</tt><tt class="py-op">)</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">        <tt class="py-name">retriever_methods</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">m</tt> <tt class="py-keyword">for</tt> <tt class="py-name">m</tt> <tt class="py-keyword">in</tt> <tt id="link-10" class="py-name" targets="Variable rtorrent.file.methods=rtorrent.file-module.html#methods,Variable rtorrent.methods=rtorrent-module.html#methods,Variable rtorrent.peer.methods=rtorrent.peer-module.html#methods,Module rtorrent.rpc.methods=rtorrent.rpc.methods-module.html,Variable rtorrent.torrent.methods=rtorrent.torrent-module.html#methods,Variable rtorrent.tracker.methods=rtorrent.tracker-module.html#methods"><a title="rtorrent.file.methods
+rtorrent.methods
+rtorrent.peer.methods
+rtorrent.rpc.methods
+rtorrent.torrent.methods
+rtorrent.tracker.methods" class="py-name" href="#" onclick="return doclink('link-10', 'methods', 'link-10');">methods</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">m</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method rtorrent.rpc.Method.is_retriever()=rtorrent.rpc.Method-class.html#is_retriever"><a title="rtorrent.rpc.Method.is_retriever" class="py-name" href="#" onclick="return doclink('link-11', 'is_retriever', 'link-11');">is_retriever</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">method</tt> <tt class="py-keyword">in</tt> <tt class="py-name">retriever_methods</tt><tt class="py-op">:</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">            <tt class="py-name">multicall</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method rtorrent.rpc.Multicall.add()=rtorrent.rpc.Multicall-class.html#add"><a title="rtorrent.rpc.Multicall.add" class="py-name" href="#" onclick="return doclink('link-12', 'add', 'link-12');">add</a></tt><tt class="py-op">(</tt><tt class="py-name">method</tt><tt class="py-op">,</tt> <tt class="py-string">"{0}:t{1}"</tt><tt class="py-op">.</tt><tt class="py-name">format</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">info_hash</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">index</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line"> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">        <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt class="py-name">multicall</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Method rtorrent.rpc.Multicall.call()=rtorrent.rpc.Multicall-class.html#call"><a title="rtorrent.rpc.Multicall.call" class="py-name" href="#" onclick="return doclink('link-13', 'call', 'link-13');">call</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">m</tt><tt class="py-op">,</tt> <tt class="py-name">r</tt> <tt class="py-keyword">in</tt> <tt class="py-name">zip</tt><tt class="py-op">(</tt><tt class="py-name">retriever_methods</tt><tt class="py-op">,</tt> <tt class="py-name">result</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">            <tt class="py-name">setattr</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">m</tt><tt class="py-op">.</tt><tt class="py-name">varname</tt><tt class="py-op">,</tt> <tt id="link-14" class="py-name"><a title="rtorrent" class="py-name" href="#" onclick="return doclink('link-14', 'rtorrent', 'link-0');">rtorrent</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="rtorrent.rpc" class="py-name" href="#" onclick="return doclink('link-15', 'rpc', 'link-1');">rpc</a></tt><tt class="py-op">.</tt><tt id="link-16" class="py-name" targets="Function rtorrent.rpc.process_result()=rtorrent.rpc-module.html#process_result"><a title="rtorrent.rpc.process_result" class="py-name" href="#" onclick="return doclink('link-16', 'process_result', 'link-16');">process_result</a></tt><tt class="py-op">(</tt><tt class="py-name">m</tt><tt class="py-op">,</tt> <tt class="py-name">r</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line"> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line"><tt id="link-17" class="py-name"><a title="rtorrent.file.methods
+rtorrent.methods
+rtorrent.peer.methods
+rtorrent.rpc.methods
+rtorrent.torrent.methods
+rtorrent.tracker.methods" class="py-name" href="#" onclick="return doclink('link-17', 'methods', 'link-10');">methods</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">    <tt class="py-comment"># RETRIEVERS</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">    <tt id="link-18" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-18', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-19" class="py-name" targets="Class rtorrent.tracker.Tracker=rtorrent.tracker.Tracker-class.html"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-19', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'is_enabled'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.is_enabled'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-name">boolean</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">    <tt id="link-20" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-20', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-21" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-21', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_id'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_id'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">    <tt id="link-22" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-22', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-23" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-23', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_scrape_incomplete'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_scrape_incomplete'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">    <tt id="link-24" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-24', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-25" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-25', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'is_open'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.is_open'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-name">boolean</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">    <tt id="link-26" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-26', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-27" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-27', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_min_interval'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_min_interval'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">    <tt id="link-28" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-28', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-29" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-29', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_scrape_downloaded'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_scrape_downloaded'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">    <tt id="link-30" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-30', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-31" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-31', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_group'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_group'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">    <tt id="link-32" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-32', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-33" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-33', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_scrape_time_last'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_scrape_time_last'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line">    <tt id="link-34" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-34', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-35" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-35', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_type'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_type'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line">    <tt id="link-36" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-36', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-37" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-37', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_normal_interval'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_normal_interval'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line">    <tt id="link-38" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-38', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-39" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-39', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_url'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_url'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line">    <tt id="link-40" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-40', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-41" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-41', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'get_scrape_complete'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.get_scrape_complete'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line"> </tt>
+<a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line">    <tt class="py-comment"># MODIFIERS</tt> </tt>
+<a name="L79"></a><tt class="py-lineno">79</tt>  <tt class="py-line">    <tt id="link-42" class="py-name"><a title="rtorrent.rpc.Method" class="py-name" href="#" onclick="return doclink('link-42', 'Method', 'link-2');">Method</a></tt><tt class="py-op">(</tt><tt id="link-43" class="py-name"><a title="rtorrent.tracker.Tracker" class="py-name" href="#" onclick="return doclink('link-43', 'Tracker', 'link-19');">Tracker</a></tt><tt class="py-op">,</tt> <tt class="py-string">'set_enabled'</tt><tt class="py-op">,</tt> <tt class="py-string">'t.set_enabled'</tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L80"></a><tt class="py-lineno">80</tt>  <tt class="py-line"><tt class="py-op">]</tt> </tt>
+<a name="L81"></a><tt class="py-lineno">81</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="rtorrent-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Oct  7 21:44:22 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
