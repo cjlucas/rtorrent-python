@@ -1,3 +1,8 @@
+v0.2.1 (October 18, 2011)
+-------------------------
+- Added: short delay before verifying if torrent was loaded to give rTorrent a chance to actually load it
+- Fixed: a bug that caused load_torrent() to not see that the torrent was added successfully (Issue #1)
+
 v0.2.0 (October 07, 2011)
 -------------------------
 - Added: support for Peer rpc methods
