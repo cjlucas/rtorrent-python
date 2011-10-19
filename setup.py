@@ -35,4 +35,5 @@ setup(
     scripts=[],
     install_requires=required_pkgs,
     classifiers=classifiers,
+    include_package_data=True,
 )
