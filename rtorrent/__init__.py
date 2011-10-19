@@ -37,7 +37,7 @@ else:
     from urllib2 import urlopen #@UnresolvedImport @Reimport
 
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __author__ = "Chris Lucas"
 __contact__ = "cjlucas07@gmail.com"
 __license__ = "MIT"
