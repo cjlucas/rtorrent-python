@@ -205,6 +205,7 @@ class RTorrent:
         getattr(self._p, func_name)(torrent)
 
         if verify_load:
+            time.sleep(1) # was still getting AssertionErrors, delay should help
             self.get_torrents()
             assert info_hash in self.download_list, "Adding torrent was unsuccessful."
 
