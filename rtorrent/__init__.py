@@ -352,7 +352,7 @@ methods = [
     Method(RTorrent, 'get_xmlrpc_size_limit', 'get_xmlrpc_size_limit', None),
     Method(RTorrent, 'get_proxy_address', 'get_proxy_address', None),
     Method(RTorrent, 'get_split_suffix', 'get_split_suffix', None),
-    Method(RTorrent, 'get_upload_rate', 'get_upload_rate', None),
+    Method(RTorrent, 'get_up_limit', 'get_upload_rate', None),
     Method(RTorrent, 'get_max_memory_usage', 'get_max_memory_usage', None),
     Method(RTorrent, 'get_max_open_files', 'get_max_open_files', None),
     Method(RTorrent, 'get_min_peers_seed', 'get_min_peers_seed', None),
@@ -381,7 +381,7 @@ methods = [
     Method(RTorrent, 'get_max_downloads_global', 'get_max_downloads_global', None),
     Method(RTorrent, 'get_name', 'get_name', None),
     Method(RTorrent, 'get_session_on_completion', 'get_session_on_completion', None),
-    Method(RTorrent, 'get_download_rate', 'get_download_rate', None),
+    Method(RTorrent, 'get_down_limit', 'get_download_rate', None),
     Method(RTorrent, 'get_down_total', 'get_down_total', None),
     Method(RTorrent, 'get_up_rate', 'get_up_rate', None),
     Method(RTorrent, 'get_hash_max_tries', 'get_hash_max_tries', None),
@@ -424,7 +424,7 @@ methods = [
            @param arg: ip address
            @type arg: str
            """),
-    Method(RTorrent, 'set_upload_limit', 'set_upload_rate',
+    Method(RTorrent, 'set_up_limit', 'set_upload_rate',
            """Set global upload limit (in bytes)
            
            @param arg: speed limit
@@ -449,7 +449,7 @@ methods = [
     Method(RTorrent, 'set_preload_min_size', 'set_preload_min_size', None),
     Method(RTorrent, 'set_log.tracker', 'set_log.tracker', None),
     Method(RTorrent, 'set_max_uploads_global', 'set_max_uploads_global', None),
-    Method(RTorrent, 'set_download_limit', 'set_download_rate',
+    Method(RTorrent, 'set_down_limit', 'set_download_rate',
            """Set global download limit (in bytes)
            
            @param arg: speed limit
