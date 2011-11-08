@@ -18,10 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# Version: 20111003
+# Version: 20111107
 #
 # Changelog
 # ---------
+# 2011-11-07  - Added support for Python2 (tested on 2.6)
 # 2011-10-03  - Fixed: moved check for end of list at the top of the while loop
 #               in _decode_list (in case the list is empty) (Chris Lucas)
 #             - Converted dictionary keys to str
@@ -34,6 +35,13 @@
 #			   dictionary resulted in a parse error while decoding
 #
 # 2011-04-03  - Original release
+
+import sys
+
+_py3 = sys.version_info[0] == 3
+
+if _py3: _VALID_STRING_TYPES = (str,)
+else: _VALID_STRING_TYPES = (str, unicode)
 
 _TYPE_INT		 = 1
 _TYPE_STRING	 = 2
@@ -48,6 +56,7 @@ _TYPE_INVALID	 = 6
 #   Return value:
 #	   Returns an integer that describes what type the next value/item is
 def _gettype(char):
+	if not isinstance(char, int): char = ord(char)
 	if char == 0x6C:						# 'l'
 		return _TYPE_LIST
 	elif char == 0x64:					  # 'd'
@@ -70,7 +79,12 @@ def _gettype(char):
 #	   be used to parse the next part of the data
 def _decode_string(data):
 	end = 1
-	while data[end] != 0x3A:	# ':'
+	# if py3, data[end] is going to be an int
+	# if py2, data[end] will be a string
+	if _py3: char = 0x3A
+	else: char = chr(0x3A)
+
+	while data[end] != char:	# ':'
 		end = end + 1
 	strlen = int(data[:end])
 	return (data[end + 1:strlen + end + 1], data[strlen + end + 1:])
@@ -84,7 +98,12 @@ def _decode_string(data):
 #	   be used to parse the next part of the data
 def _decode_int(data):
 	end = 1
-	while data[end] != 0x65:	 # 'e'
+	# if py3, data[end] is going to be an int
+	# if py2, data[end] will be a string
+	if _py3: char = 0x65
+	else: char = chr(0x65)
+
+	while data[end] != char:	 # 'e'
 		end = end + 1
 	return (int(data[1:end]), data[end + 1:])
 
@@ -166,8 +185,8 @@ def _decode(data):
 #	   or a combinatin of those
 #	   If an error occurs the return value is False
 def decode(data):
-	if isinstance(data, str):
-		data = data.encode()
+	#if isinstance(data, str):
+	#	data = data.encode()
 	decoded, overflow = _decode(data)
 	return decoded
 
@@ -198,7 +217,7 @@ def _encode_dict(data):
 	edict = b'd'
 	keys = []
 	for key in data:
-		if not isinstance(key, str) and not isinstance(key, bytes):
+		if not isinstance(key, _VALID_STRING_TYPES) and not isinstance(key, bytes):
 			return False
 		keys.append(key)
 	keys.sort()
@@ -223,7 +242,7 @@ def encode(data):
 		return _encode_int(data)
 	elif isinstance(data, bytes):
 		return _encode_string(data)
-	elif isinstance(data, str):
+	elif isinstance(data, _VALID_STRING_TYPES):
 		return _encode_string(data.encode())
 	elif isinstance(data, list):
 		return _encode_list(data)
