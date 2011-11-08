@@ -92,6 +92,7 @@ class TorrentParser():
 
     def _parse_torrent(self):
         for k in self._torrent_decoded:
-            setattr(self, k, self._torrent_decoded[k])
+            key = k.replace(" ", "_").lower()
+            setattr(self, key, self._torrent_decoded[k])
 
         self._calc_info_hash()
