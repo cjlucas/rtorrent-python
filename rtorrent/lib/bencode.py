@@ -41,7 +41,7 @@ import sys
 _py3 = sys.version_info[0] == 3
 
 if _py3: _VALID_STRING_TYPES = (str,)
-else: _VALID_STRING_TYPES = (str, unicode)
+else: _VALID_STRING_TYPES = (str, unicode) #@UndefinedVariable
 
 _TYPE_INT		 = 1
 _TYPE_STRING	 = 2
