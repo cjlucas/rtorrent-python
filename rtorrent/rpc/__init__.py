@@ -45,12 +45,14 @@ class Method:
     """Represents an individual RPC method"""
 
     def __init__(self, class_name, method_name,
-                 rpc_call, docstring=None, varname=None, **kwargs):
+                 rpc_call, docstring=None, varname=None,
+                 min_version=(0, 0, 0), **kwargs):
         self.class_name = class_name #: Class this method is associated with
         self.method_name = method_name #: name of public-facing method
         self.rpc_call = rpc_call #: name of rpc method
         self.docstring = docstring #: docstring for rpc method (optional)
         self.varname = varname #: variable for the result of the method call, usually set to self.varname
+        self.min_version = min_version #: Minimum version of rTorrent required
         self.boolean = kwargs.get("boolean", False) #: returns boolean value?
         self.required_args = [] #: Arguments required when calling the method
 
