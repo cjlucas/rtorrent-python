@@ -1,3 +1,9 @@
+v0.2.2 (November 12, 2011)
+--------------------------
+- TorrentParser now works with Python2 (Issue #2)
+- Fixed a bug in which if dict keys within the torrent had spaces, those spaces would not be converted
+  to underscores when parsing the torrent, making the instance variables inaccessable (TorrentParser)
+
 v0.2.1 (October 18, 2011)
 -------------------------
 - Added: short delay before verifying if torrent was loaded to give rTorrent a chance to actually load it
