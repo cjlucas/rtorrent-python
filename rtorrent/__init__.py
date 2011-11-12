@@ -63,6 +63,8 @@ class RTorrent:
         if self._connected:
             self._check_commands()
             self.update()
+            self.client_version_tuple = tuple([int(i) for i in \
+                                               self.client_version.split(".")])
             assert self._meets_version_requirement() is True, \
                 "Error: Minimum rTorrent version required is {0}".format(
                                                     MIN_RTORRENT_VERSION_STR)
