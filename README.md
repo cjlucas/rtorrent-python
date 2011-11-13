@@ -2,6 +2,8 @@ ABOUT THIS PROJECT
 ------------------
 The xmlrpc interface to rTorrent is extremely unintuitive and has very little documentation, this project aims to make interfacing with rTorrent much easier.
 
+This project is considered beta, so expect the API to change. All API changes will be noted in the CHANGELOG.
+
 REQUIREMENTS
 ------------
 - [Python](http://www.python.org/) 2.6 or higher, 3.0 or higher (might work on older versions, but these are the only ones I'm supporting).
