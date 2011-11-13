@@ -1,1 +1,6 @@
-tests/
+*
+!html
+!txt
+!js
+!css
+!png
