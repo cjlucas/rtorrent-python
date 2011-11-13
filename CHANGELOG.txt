@@ -5,6 +5,14 @@ v0.2.2 (November 12, 2011)
   to underscores when parsing the torrent, making the instance variables inaccessable (TorrentParser)
 - Fixed an issue in which creating a File instance would fail (Issue #3)
 
+- API CHANGES
+  - RTorrent
+    - renamed: get_download_rate to get_down_limit
+    - renamed: get_upload_rate to get_up_limit
+    - renamed: set_download_limit to set_down_limit
+    - renamed: set_upload_limit to set_up_limit
+
+
 v0.2.1 (October 18, 2011)
 -------------------------
 - Added: short delay before verifying if torrent was loaded to give rTorrent a chance to actually load it
