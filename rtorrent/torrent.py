@@ -116,18 +116,29 @@ class Torrent:
 
         results = m.call()[0] # only sent one call, only need first result
 
+        offset_method_index = retriever_methods.index(
+                                    rtorrent.rpc.find_method("f.get_offset"))
+
+        # make a list of the offsets of all the files, sort appropriately
+        offset_list = sorted([r[offset_method_index] for r in results])
+
         for result in results:
             results_dict = {}
             # build results_dict
             for m, r in zip(retriever_methods, result):
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            self.files.append(File(self._p, self.info_hash, **results_dict))
+            # get proper index positions for each file (based on the file offset)
+            f_index = offset_list.index(results_dict["offset"])
 
-        # add proper index positions for each file (based on the file offset)
-        offsets = sorted([f.offset for f in self.files])
-        for f in self.files:
-            f.index = offsets.index(f.offset)
+            self.files.append(File(self._p, self.info_hash, \
+                                   f_index, **results_dict))
+
+        ### obsolete
+        #offsets = sorted([f.offset for f in self.files])
+        #for f in self.files:
+        #    f.index = offsets.index(f.offset)
+        ###
 
         return(self.files)
 
