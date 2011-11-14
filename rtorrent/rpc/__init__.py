@@ -142,11 +142,10 @@ def call_method(self, method, *args):
     m.add(method, *args)
     ret_value = m.call()[0]
 
-    if method.is_retriever():
-        setattr(self, method.varname, process_result(method, ret_value))
-    else:
-        setattr(self, method.varname, process_result(method, args[-1]))
+    if method.is_retriever(): value = process_result(method, ret_value)
+    else: value = process_result(method, args[-1])
 
+    setattr(self, method.varname, value)
     return(ret_value)
 
 
