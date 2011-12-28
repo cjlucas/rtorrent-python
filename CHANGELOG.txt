@@ -16,10 +16,6 @@ v0.2.3 (Not yet released)
       - will raise rtorrent.err.RTorrentVersionError if the method is newer
         than the rTorrent client
       - will raise MethodError if method isn't listed in RTorrent._rpc_methods
-    
-    - added is_available() function to rtorrent.rpc.Method. This function will
-      check if the Method instance is supported by the instance of RTorrent
-      specified
       
     - Methods for RTorrent/Peer/Torrent/etc instances will now be created
       dynamically based on the client version of rTorrent that it's connected
@@ -28,6 +24,12 @@ v0.2.3 (Not yet released)
       the rTorrent client supported said method. This will ensure that methods 
       aren't available if the client doesn't support it). You can use hasattr() 
       in order to avoid AttributeError being raised.
+
+  - rtorrent.rpc.Method
+    - added: is_available(). This function will check if the Method instance is 
+             supported by the instance of RTorrent specified
+    - renamed: class_name to _class
+    - added: class_name, which is now just the name of the class, (_class.__name__)
 
 v0.2.2 (November 12, 2011)
 --------------------------
