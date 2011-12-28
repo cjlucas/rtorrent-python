@@ -1,8 +1,39 @@
+v0.2.3 (Not yet released)
+--------------------------------
+- added: min_version argument in rtorrent.rpc.Method, this will ensure
+         the method will only be available when connected to an rTorrent
+         client that can actually support it.
+
+- API CHANGES
+  - General
+    - RTorrent/Peer/Tracker/File/Torrent/Multicall now requires the actual 
+      instance of RTorrent as and input instead of the XMLRPC 
+      connection for that instance
+    
+    - instance methods that communicate with rTorrent will raise
+      an exception if the said method is not supported by the version of
+      rTorrent you're connected to:
+      - will raise rtorrent.err.RTorrentVersionError if the method is newer
+        than the rTorrent client
+      - will raise MethodError if method isn't listed in RTorrent._rpc_methods
+    
+    - added is_available() function to rtorrent.rpc.Method. This function will
+      check if the Method instance is supported by the instance of RTorrent
+      specified
+      
+    - Methods for RTorrent/Peer/Torrent/etc instances will now be created
+      dynamically based on the client version of rTorrent that it's connected
+      to (as opposed to the old way, which deleted the original Method instance,
+      and therefore was inaccessible to any future connection to rTorrent, even if 
+      the rTorrent client supported said method. This will ensure that methods 
+      aren't available if the client doesn't support it). You can use hasattr() 
+      in order to avoid AttributeError being raised.
+
 v0.2.2 (November 12, 2011)
 --------------------------
 - TorrentParser now works with Python2 (Issue #2)
 - Fixed a bug in which if dict keys within the torrent had spaces, those spaces would not be converted
-  to underscores when parsing the torrent, making the instance variables inaccessable (TorrentParser)
+  to underscores when parsing the torrent, making the instance variables inaccessible (TorrentParser)
 - Fixed an issue in which creating a File instance would fail (Issue #3)
 
 - API CHANGES
