@@ -170,7 +170,7 @@ def call_method(class_obj, method, *args):
         else:
             raise MethodError("RPC method '{0}' not found.".format(rpc_call))
 
-    m = Multicall(class_obj)
+    m = Multicall(rt_obj)
     m.add(method, *args)
     # only added one method, only getting one result back
     ret_value = m.call()[0]
