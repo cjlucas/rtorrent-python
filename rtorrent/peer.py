@@ -68,7 +68,7 @@ methods = [
     Method(Peer, 'is_snubbed', 'p.is_snubbed', None, boolean=True),
     Method(Peer, 'get_id_html', 'p.get_id_html', None),
     Method(Peer, 'get_up_rate', 'p.get_up_rate', None),
-    Method(Peer, 'banned', 'p.banned', None),
+    Method(Peer, 'is_banned', 'p.banned', None, boolean=True),
     Method(Peer, 'get_completed_percent', 'p.get_completed_percent', None),
     Method(Peer, 'completed_percent', 'p.completed_percent', None),
     Method(Peer, 'get_id', 'p.get_id', None),
@@ -79,7 +79,7 @@ methods = [
     Method(Peer, 'is_incoming', 'p.is_incoming', None, boolean=True),
     Method(Peer, 'is_encrypted', 'p.is_encrypted', None, boolean=True),
     Method(Peer, 'get_options_str', 'p.get_options_str', None),
-    Method(Peer, 'client_version', 'p.client_version', None),
+    Method(Peer, 'get_client_version', 'p.client_version', None),
     Method(Peer, 'get_up_total', 'p.get_up_total', None),
 
     # testing

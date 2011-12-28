@@ -228,7 +228,7 @@ methods = [
     Method(Torrent, 'get_state_changed', 'd.get_state_changed', None),
     Method(Torrent, 'get_peers_not_connected', 'd.get_peers_not_connected', None),
     Method(Torrent, 'get_directory', 'd.get_directory', None),
-    Method(Torrent, 'incomplete', 'd.incomplete', None),
+    Method(Torrent, 'is_incomplete', 'd.incomplete', None, boolean=True),
     Method(Torrent, 'get_tracker_size', 'd.get_tracker_size', None),
     Method(Torrent, 'is_multi_file', 'd.is_multi_file', None, boolean=True),
     Method(Torrent, 'get_local_id', 'd.get_local_id', None),

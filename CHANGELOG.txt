@@ -30,6 +30,13 @@ v0.2.3 (Not yet released)
              supported by the instance of RTorrent specified
     - renamed: class_name to _class
     - added: class_name, which is now just the name of the class, (_class.__name__)
+  
+  - rtorrent.peer.Peer
+    - renamed: banned to is_banned; added support for boolean
+    - renamed: client_version to get_client_version
+  
+  - rtorrent.torrent.Torrent
+    - renamed: incomplete to is_incomplete; added support for boolean
 
 v0.2.2 (November 12, 2011)
 --------------------------
