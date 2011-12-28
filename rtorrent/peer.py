@@ -44,7 +44,7 @@ class Peer:
         multicall = rtorrent.rpc.Multicall(self._p)
         retriever_methods = [m for m in methods if m.is_retriever()]
         for method in retriever_methods:
-            multicall.add(method, "{0}:p{1}".format(self.info_hash, self.id))
+            multicall.add(method, self.rpc_id)
 
         result = multicall.call()
         for m, r in zip(retriever_methods, result):

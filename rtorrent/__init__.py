@@ -39,7 +39,7 @@ else:
 
 __version__ = "0.2.2"
 __author__ = "Chris Lucas"
-__contact__ = "cjlucas07@gmail.com"
+__contact__ = "chris@chrisjlucas.com"
 __license__ = "MIT"
 
 MIN_RTORRENT_VERSION = (0, 8, 1)

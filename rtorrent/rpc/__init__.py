@@ -26,11 +26,11 @@ if _py3: import xmlrpc.client as xmlrpclib #@UnresolvedImport
 else: import xmlrpclib #@UnresolvedImport @Reimport
 
 def get_varname(rpc_call):
-    """Transform function into variable name.
+    """Transform rpc method into variable name.
     
     @newfield example: Example
     @example: if the name of the rpc method is 'p.get_down_rate', the variable
-    name will be 'down_rate' (see source to see how it gets parsed)
+    name will be 'down_rate'
     """
     # extract variable name from xmlrpc func name
     r = re.search("([ptdf]\.|system\.|get\_|is\_|set\_)+([^=]*)", rpc_call, re.I)
@@ -90,7 +90,7 @@ class Multicall:
         """Add call to multicall
         
         @param method: L{Method} instance or name of raw RPC method
-        @type method: Methor or str
+        @type method: Method or str
         
         @param args: call arguments
         """
@@ -115,7 +115,7 @@ class Multicall:
         """Execute added multicall calls
         
         @return: the results, in the order they were added
-        @rtype: list
+        @rtype: tuple
         """
         m = xmlrpclib.MultiCall(self._proxy)
         for call in self.calls:
@@ -131,7 +131,7 @@ class Multicall:
             method = c[0]
             results_processed.append(process_result(method, r))
 
-        return(results_processed)
+        return(tuple(results_processed))
 
 def call_method(self, method, *args):
     """Handles single RPC call and assigns result to varname"""
