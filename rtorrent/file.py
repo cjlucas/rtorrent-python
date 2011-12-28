@@ -18,7 +18,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from rtorrent.rpc import Method
+#from rtorrent.rpc import Method
+import rtorrent.rpc
+
+Method = rtorrent.rpc.Method
 
 class File:
     """Represents an individual file within a L{Torrent} instance."""
@@ -32,6 +35,9 @@ class File:
             setattr(self, k, kwargs.get(k, None))
 
         self.rpc_id = "{0}:f{1}".format(self.info_hash, self.index) #: unique id to pass to rTorrent
+
+        self._method_list = self._rt_obj._method_dict[self.__class__.__name__]
+        rtorrent.rpc._build_rpc_methods(self, self._method_list)
 
     def __repr__(self):
         return("<File index={0} path=\"{1}\">".format(self.index, self.path))
@@ -56,6 +62,9 @@ methods = [
     Method(File, 'get_frozen_path', 'f.get_frozen_path', None),
     Method(File, 'get_path_depth', 'f.get_path_depth', None),
     Method(File, 'is_create_queued', 'f.is_create_queued', None, boolean=True),
+
+    # testing
+    Method(File, 'fake_method', 'f.fake_method', None, boolean=True),
 
     # MODIFIERS
 ]

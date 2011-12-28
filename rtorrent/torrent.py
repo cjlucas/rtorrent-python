@@ -19,10 +19,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import rtorrent.rpc
-from rtorrent.rpc import Method
+#from rtorrent.rpc import Method
 from rtorrent.peer import Peer
 from rtorrent.tracker import Tracker
 from rtorrent.file import File
+
+Method = rtorrent.rpc.Method
 
 class Torrent:
     """Represents an individual torrent within a L{RTorrent} instance."""
@@ -39,6 +41,9 @@ class Torrent:
         self.trackers = []
         self.files = []
 
+        self._method_list = self._rt_obj._method_dict[self.__class__.__name__]
+        rtorrent.rpc._build_rpc_methods(self, self._method_list)
+
     def __repr__(self):
         return("<Torrent info_hash=\"{0}\">".format(self.info_hash))
 
@@ -51,7 +56,8 @@ class Torrent:
         @note: also assigns return value to self.peers
         """
         self.peers = []
-        methods = rtorrent.peer.methods
+        #methods = rtorrent.peer.methods
+        methods = self._rt_obj._method_dict["Peer"]
         retriever_methods = [m for m in methods if m.is_retriever()]
         # need to leave 2nd arg empty (dunno why)
         m = rtorrent.rpc.Multicall(self._rt_obj)
@@ -79,7 +85,7 @@ class Torrent:
         @note: also assigns return value to self.trackers
         """
         self.trackers = []
-        methods = rtorrent.tracker.methods
+        methods = self._rt_obj._method_dict["Tracker"]
         retriever_methods = [m for m in methods if m.is_retriever()]
         # need to leave 2nd arg empty (dunno why)
         m = rtorrent.rpc.Multicall(self._rt_obj)
@@ -108,7 +114,7 @@ class Torrent:
         """
 
         self.files = []
-        methods = rtorrent.file.methods
+        methods = self._rt_obj._method_dict["File"]
         retriever_methods = [m for m in methods if m.is_retriever()]
         # 2nd arg can be anything, but it'll return all files in torrent regardless
         m = rtorrent.rpc.Multicall(self._rt_obj)
@@ -186,7 +192,7 @@ class Torrent:
         @return: None
         """
         multicall = rtorrent.rpc.Multicall(self._rt_obj)
-        retriever_methods = [m for m in methods \
+        retriever_methods = [m for m in self._method_list \
                         if m.is_retriever() and m.is_available(self._rt_obj)]
         for method in retriever_methods:
             multicall.add(method, self.info_hash)
@@ -262,6 +268,9 @@ methods = [
     Method(Torrent, 'get_bytes_done', 'd.get_bytes_done', None),
     Method(Torrent, 'get_up_rate', 'd.get_up_rate', None),
     Method(Torrent, 'get_up_total', 'd.get_up_total', None),
+
+    # testing
+    Method(Torrent, 'fake_method', 'd.fake_method', None),
 
     # MODIFIERS
     Method(Torrent, 'set_uploads_max', 'd.set_uploads_max', None),

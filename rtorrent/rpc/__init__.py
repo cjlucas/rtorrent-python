@@ -20,7 +20,7 @@
 
 import rtorrent
 import re
-from rtorrent.common import _py3
+from rtorrent.common import _py3, bool_to_int
 from rtorrent.err import RTorrentVersionError, MethodError
 
 if _py3: import xmlrpc.client as xmlrpclib #@UnresolvedImport
@@ -45,10 +45,11 @@ class DummyClass:
 class Method:
     """Represents an individual RPC method"""
 
-    def __init__(self, class_name, method_name,
+    def __init__(self, _class, method_name,
                  rpc_call, docstring=None, varname=None,
                  min_version=(0, 0, 0), **kwargs):
-        self.class_name = class_name #: Class this method is associated with
+        self._class = _class #: Class this method is associated with
+        self.class_name = _class.__name__
         self.method_name = method_name #: name of public-facing method
         self.rpc_call = rpc_call #: name of rpc method
         self.docstring = docstring #: docstring for rpc method (optional)
@@ -220,4 +221,31 @@ def process_result(method, result):
         elif result in [0, '0']: result = False
 
     return(result)
+
+def _build_rpc_methods(class_obj, method_list):
+    """Build glorified aliases to raw RPC methods"""
+    for m in method_list:
+        class_name = m.class_name
+        if class_name != class_obj.__class__.__name__: continue
+
+        if class_name == "RTorrent":
+            caller = lambda self = class_obj, arg = None, method = m:\
+                call_method(self, method, bool_to_int(arg))
+        elif class_name == "Torrent":
+            caller = lambda self = class_obj, arg = None, method = m:\
+                call_method(self, method, self.rpc_id,
+                                         bool_to_int(arg))
+        elif class_name in ["Tracker", "File"]:
+            caller = lambda self = class_obj, arg = None, method = m:\
+                call_method(self, method, self.rpc_id,
+                                         bool_to_int(arg))
+
+        elif class_name == "Peer":
+            caller = lambda self = class_obj, arg = None, method = m:\
+                call_method(self, method, self.rpc_id,
+                                         bool_to_int(arg))
+
+        if m.docstring is not None: caller.__doc__ = m.docstring
+
+        setattr(class_obj, m.method_name, caller)
 

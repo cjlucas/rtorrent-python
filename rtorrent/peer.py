@@ -18,8 +18,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from rtorrent.rpc import Method
+#from rtorrent.rpc import Method
 import rtorrent.rpc
+
+Method = rtorrent.rpc.Method
 
 class Peer:
     """Represents an individual peer within a L{Torrent} instance."""
@@ -32,6 +34,9 @@ class Peer:
 
         self.rpc_id = "{0}:p{1}".format(self.info_hash, self.id) #: unique id to pass to rTorrent
 
+        self._method_list = self._rt_obj._method_dict[self.__class__.__name__]
+        rtorrent.rpc._build_rpc_methods(self, self._method_list)
+
     def __repr__(self):
         return("<Peer id={0}>".format(self.id))
 
@@ -43,7 +48,7 @@ class Peer:
         @return: None
         """
         multicall = rtorrent.rpc.Multicall(self._rt_obj)
-        retriever_methods = [m for m in methods \
+        retriever_methods = [m for m in self._method_list \
                         if m.is_retriever() and m.is_available(self._rt_obj)]
         for method in retriever_methods:
             multicall.add(method, self.rpc_id)
@@ -76,6 +81,9 @@ methods = [
     Method(Peer, 'get_options_str', 'p.get_options_str', None),
     Method(Peer, 'client_version', 'p.client_version', None),
     Method(Peer, 'get_up_total', 'p.get_up_total', None),
+
+    # testing
+    Method(Peer, 'fake_method', 'p._fake_method', None),
 
     # MODIFIERS
 ]

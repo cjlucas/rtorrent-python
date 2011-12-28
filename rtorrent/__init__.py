@@ -61,9 +61,11 @@ class RTorrent:
 
         self._connect()
         if self._connected:
-            #self._check_commands()
             self.client_version_tuple = tuple([int(i) for i in \
-                                    self._p.system.client_version().split(".")])
+                        self._p.system.client_version().split(".")])
+            self._build_method_dict()
+            rtorrent.rpc._build_rpc_methods(self,
+                                self._method_dict[self.__class__.__name__])
             self.update()
             assert self._meets_version_requirement() is True, \
                 "Error: Minimum rTorrent version required is {0}".format(
@@ -100,6 +102,15 @@ class RTorrent:
 #            for i in sorted(del_index, reverse=True): del method_list[i]
 ################################################################################
 
+    def _build_method_dict(self):
+        self._method_dict = {}
+        for method_list in _all_methods_list:
+            for m in method_list:
+                if m.is_available(self):
+                    if m.class_name not in self._method_dict.keys():
+                        self._method_dict[m.class_name] = []
+                    self._method_dict[m.class_name].append(m)
+
     def _meets_version_requirement(self):
         """Check if rTorrent version is meets requirements"""
         if hasattr(self, "client_version_tuple"):
@@ -108,6 +119,7 @@ class RTorrent:
             return(False)
 
     def get_commands(self):
+        # TODO: rename this to get_rpc_methods()
         """Get list of raw RPC commands supported by rTorrent
         
         @return: raw RPC commands
@@ -315,32 +327,6 @@ class RTorrent:
         for m, r in zip(retriever_methods, result):
             setattr(self, m.varname, rtorrent.rpc.process_result(m, r))
 
-def _build_rpc_methods(method_list):
-    """Build glorified aliases to raw RPC methods"""
-    for m in method_list:
-        class_name = m.class_name.__name__
-
-        if class_name == "RTorrent":
-            caller = lambda self, arg = None, method = m:\
-                rtorrent.rpc.call_method(self, method, bool_to_int(arg))
-        elif class_name == "Torrent":
-            caller = lambda self, arg = None, method = m:\
-                rtorrent.rpc.call_method(self, method, self.rpc_id,
-                                         bool_to_int(arg))
-        elif class_name in ["Tracker", "File"]:
-            caller = lambda self, arg = None, method = m:\
-                rtorrent.rpc.call_method(self, method, self.rpc_id,
-                                         bool_to_int(arg))
-
-        elif class_name == "Peer":
-            caller = lambda self, arg = None, method = m:\
-                rtorrent.rpc.call_method(self, method, self.rpc_id,
-                                         bool_to_int(arg))
-
-        if m.docstring is not None: caller.__doc__ = m.docstring
-
-        setattr(m.class_name, m.method_name, caller)
-
 def _build_class_methods(class_obj):
     # multicall add class
     caller = lambda self, multicall, method, *args:\
@@ -519,7 +505,9 @@ _all_methods_list = [methods,
                     rtorrent.peer.methods,
 ]
 
-for l in _all_methods_list: _build_rpc_methods(l)
+################################################################################
+# for l in _all_methods_list: _build_rpc_methods(l)
+################################################################################
 
 for c in [rtorrent.file.File,
           rtorrent.torrent.Torrent,
