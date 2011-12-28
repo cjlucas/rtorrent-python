@@ -19,7 +19,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from rtorrent.common import _py3, cmd_exists, find_torrent, \
-    is_valid_port, bool_to_int
+    is_valid_port, bool_to_int, convert_version_tuple_to_str
 from rtorrent.lib.torrentparser import TorrentParser
 from rtorrent.rpc import Method
 from rtorrent.torrent import Torrent
@@ -43,7 +43,7 @@ __contact__ = "chris@chrisjlucas.com"
 __license__ = "MIT"
 
 MIN_RTORRENT_VERSION = (0, 8, 1)
-MIN_RTORRENT_VERSION_STR = ".".join([str(n) for n in MIN_RTORRENT_VERSION])
+MIN_RTORRENT_VERSION_STR = convert_version_tuple_to_str(MIN_RTORRENT_VERSION)
 
 
 class RTorrent:
@@ -55,16 +55,16 @@ class RTorrent:
         self._verbose = _verbose
         self.torrents = [] #: List of L{Torrent} instances
         self.download_list = [] #: List of torrent info hashes
-        self._rpc_methods = None #: List of rTorrent RPC methods
+        self._rpc_methods = [] #: List of rTorrent RPC methods
         self._p = None #: X{ServerProxy} instance
         self._connected = False
 
         self._connect()
         if self._connected:
-            self._check_commands()
-            self.update()
+            #self._check_commands()
             self.client_version_tuple = tuple([int(i) for i in \
-                                               self.client_version.split(".")])
+                                    self._p.system.client_version().split(".")])
+            self.update()
             assert self._meets_version_requirement() is True, \
                 "Error: Minimum rTorrent version required is {0}".format(
                                                     MIN_RTORRENT_VERSION_STR)
@@ -87,22 +87,23 @@ class RTorrent:
         except xmlrpclib.ResponseError:
             sys.stderr.write("*** Exception caught: ResponseError")
 
-    def _check_commands(self):
-        """Remove non-existing methods from RPC method lists"""
-        for method_list in _all_methods_list:
-            del_index = []
-            for method in method_list:
-                if method.rpc_call not in self.get_commands():
-                    del_index.append(method_list.index(method))
-
-            # reverse sort del_index so index positions don't get altered
-            for i in sorted(del_index, reverse=True): del method_list[i]
+############ DEPRECATED ########################################################
+#    def _check_commands(self):
+#        """Remove non-existing methods from RPC method lists"""
+#        for method_list in _all_methods_list:
+#            del_index = []
+#            for method in method_list:
+#                if method.rpc_call not in self.get_commands():
+#                    del_index.append(method_list.index(method))
+# 
+#            # reverse sort del_index so index positions don't get altered
+#            for i in sorted(del_index, reverse=True): del method_list[i]
+################################################################################
 
     def _meets_version_requirement(self):
         """Check if rTorrent version is meets requirements"""
-        if hasattr(self, "client_version"):
-            version = tuple([int(i) for i in self.client_version.split(".")])
-            return(version >= MIN_RTORRENT_VERSION)
+        if hasattr(self, "client_version_tuple"):
+            return(self.client_version_tuple >= MIN_RTORRENT_VERSION)
         else:
             return(False)
 
@@ -125,9 +126,10 @@ class RTorrent:
         self.torrents = []
         self.download_list = []
         methods = rtorrent.torrent.methods
-        retriever_methods = [m for m in methods if m.is_retriever()]
+        retriever_methods = [m for m in methods \
+                             if m.is_retriever() and m.is_available(self)]
 
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self)
         m.add("d.multicall", view, "d.get_hash=",
                 *[method.rpc_call + "=" for method in retriever_methods])
 
@@ -192,7 +194,7 @@ class RTorrent:
                                it raises
 
 
-        @note: Because this function includes url verification (if a url was inputted)
+        @note: Because this function includes url verification (if a url was input)
         as well as verification as to whether the torrent was successfully added,
         this function doesn't execute instantaneously. If that's what you're
         looking for, use load_torrent_simple() instead.
@@ -303,8 +305,9 @@ class RTorrent:
 
         @return: None
         """
-        multicall = rtorrent.rpc.Multicall(self._p)
-        retriever_methods = [m for m in methods if m.is_retriever()]
+        multicall = rtorrent.rpc.Multicall(self)
+        retriever_methods = [m for m in methods \
+                             if m.is_retriever() and m.is_available(self)]
         for method in retriever_methods:
             multicall.add(method)
 
@@ -503,9 +506,10 @@ methods = [
             @param arg: True to enable, False to disable
             @type arg: bool
             """, boolean=True),
-    # test if RTorrent._check_commands works
+    # just testing
     Method(RTorrent, 'fake_method', 'get_fake_method', None),
-    Method(RTorrent, 'fake_method_dos', 'get_fake_method_dos', None),
+    Method(RTorrent, 'fake_method_dos', 'get_fake_method_dos', None,
+           min_version=(9, 9, 9)),
 ]
 
 _all_methods_list = [methods,

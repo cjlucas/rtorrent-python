@@ -23,8 +23,9 @@ import rtorrent.rpc
 
 class Peer:
     """Represents an individual peer within a L{Torrent} instance."""
-    def __init__(self, _p, info_hash, **kwargs):
-        self._p = _p #: X{ServerProxy} instance
+    def __init__(self, _rt_obj, info_hash, **kwargs):
+        self._rt_obj = _rt_obj
+        self._p = self._rt_obj._p #: X{ServerProxy} instance
         self.info_hash = info_hash #: info hash for the torrent the peer is associated with
         for k in kwargs.keys():
             setattr(self, k, kwargs.get(k, None))
@@ -41,8 +42,9 @@ class Peer:
 
         @return: None
         """
-        multicall = rtorrent.rpc.Multicall(self._p)
-        retriever_methods = [m for m in methods if m.is_retriever()]
+        multicall = rtorrent.rpc.Multicall(self._rt_obj)
+        retriever_methods = [m for m in methods \
+                        if m.is_retriever() and m.is_available(self._rt_obj)]
         for method in retriever_methods:
             multicall.add(method, self.rpc_id)
 

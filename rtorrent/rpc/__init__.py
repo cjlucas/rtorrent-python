@@ -21,6 +21,7 @@
 import rtorrent
 import re
 from rtorrent.common import _py3
+from rtorrent.err import RTorrentVersionError
 
 if _py3: import xmlrpc.client as xmlrpclib #@UnresolvedImport
 else: import xmlrpclib #@UnresolvedImport @Reimport
@@ -79,14 +80,24 @@ class Method:
         if self.method_type == 'r': return(True)
         else: return(False)
 
+    def is_available(self, rt_obj):
+        if rt_obj.client_version_tuple < self.min_version or \
+                self.rpc_call not in rt_obj._rpc_methods:
+            return(False)
+        else:
+            return(True)
+
 class Multicall:
-    def __init__(self, proxy, **kwargs):
-        self._proxy = proxy
+    def __init__(self, rt_obj, **kwargs):
+        self.rt_obj = rt_obj #: X{RTorrent} instance
+        self._proxy = self.rt_obj._p
         #self.info_hash = kwargs.get("info_hash", None)
         #self.index = kwargs.get("index", None)
         self.calls = []
 
     def add(self, method, *args):
+        # TODO: this is where i want to do checks for rtorrent version compliance
+        # and a check to see if the given function is in RTorrent._rpc_methods
         """Add call to multicall
         
         @param method: L{Method} instance or name of raw RPC method
@@ -97,14 +108,15 @@ class Multicall:
         # if a raw rpc method was used instead of a Method instance,
         # try and find the instance for it. And if all else fails, create a
         # dummy Method instance
-        if not isinstance(method, Method):
-            if isinstance(method, str):
-                result = find_method(method)
-                # if result not found
-                if result == -1:
-                    method = Method(DummyClass, "temp_name", method)
-                else:
-                    method = result
+        if isinstance(method, str):
+            result = find_method(method)
+            # if result not found
+            if result == -1:
+                method = Method(DummyClass, method, method)
+            else:
+                method = result
+
+        assert method.is_available(self.rt_obj), "Method unavailable."
 
         self.calls.append((method, args))
 
@@ -114,7 +126,7 @@ class Multicall:
     def call(self):
         """Execute added multicall calls
         
-        @return: the results, in the order they were added
+        @return: the results (post-processing), in the order they were added
         @rtype: tuple
         """
         m = xmlrpclib.MultiCall(self._proxy)
@@ -133,19 +145,45 @@ class Multicall:
 
         return(tuple(results_processed))
 
-def call_method(self, method, *args):
-    """Handles single RPC call and assigns result to varname"""
+def call_method(class_obj, method, *args):
+    """Handles single RPC call and assigns result to varname
+    
+    @param class_obj: Peer/File/Torrent/Tracker/RTorrent instance
+    @type class_obj: object
+    
+    @param method: L{Method} instance or name of raw RPC method
+    @type method: Method or str
+    """
     if method.is_retriever(): args = args[:-1]
     else: assert args[-1] is not None, "No argument given."
 
-    m = Multicall(self._p)
+    rpc_call = method.rpc_call
+    if class_obj.__class__.__name__ == "RTorrent": rt_obj = class_obj
+    else: rt_obj = class_obj._rt_obj
+
+    # check if rpc method is even available
+    if rpc_call not in rt_obj._rpc_methods:
+        # check if rTorrent meets minimum version requirement of the method
+        if rt_obj.client_version_tuple < method.min_version:
+            raise RTorrentVersionError(method.min_version,
+                                       rt_obj.client_version_tuple)
+        else:
+            raise NameError("RPC method '{0}' not found.".format(rpc_call))
+
+    m = Multicall(class_obj)
     m.add(method, *args)
+    # only added one method, only getting one result back
     ret_value = m.call()[0]
 
-    if method.is_retriever(): value = process_result(method, ret_value)
-    else: value = process_result(method, args[-1])
+    if method.is_retriever():
+        #value = process_result(method, ret_value)
+        value = ret_value #MultiCall already processed the result
+    else:
+        # we're setting the user's input to method.varname
+        # but we'll return the value that xmlrpc gives us
+        value = process_result(method, args[-1])
 
-    setattr(self, method.varname, value)
+    setattr(class_obj, method.varname, value)
     return(ret_value)
 
 
