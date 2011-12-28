@@ -21,7 +21,7 @@
 import rtorrent
 import re
 from rtorrent.common import _py3
-from rtorrent.err import RTorrentVersionError
+from rtorrent.err import RTorrentVersionError, MethodError
 
 if _py3: import xmlrpc.client as xmlrpclib #@UnresolvedImport
 else: import xmlrpclib #@UnresolvedImport @Reimport
@@ -96,8 +96,6 @@ class Multicall:
         self.calls = []
 
     def add(self, method, *args):
-        # TODO: this is where i want to do checks for rtorrent version compliance
-        # and a check to see if the given function is in RTorrent._rpc_methods
         """Add call to multicall
         
         @param method: L{Method} instance or name of raw RPC method
@@ -105,7 +103,7 @@ class Multicall:
         
         @param args: call arguments
         """
-        # if a raw rpc method was used instead of a Method instance,
+        # if a raw rpc method was given instead of a Method instance,
         # try and find the instance for it. And if all else fails, create a
         # dummy Method instance
         if isinstance(method, str):
@@ -116,6 +114,7 @@ class Multicall:
             else:
                 method = result
 
+        # ensure method is available before adding
         assert method.is_available(self.rt_obj), "Method unavailable."
 
         self.calls.append((method, args))
@@ -168,7 +167,7 @@ def call_method(class_obj, method, *args):
             raise RTorrentVersionError(method.min_version,
                                        rt_obj.client_version_tuple)
         else:
-            raise NameError("RPC method '{0}' not found.".format(rpc_call))
+            raise MethodError("RPC method '{0}' not found.".format(rpc_call))
 
     m = Multicall(class_obj)
     m.add(method, *args)
