@@ -63,9 +63,11 @@ class RTorrent:
         if self._connected:
             self.client_version_tuple = tuple([int(i) for i in \
                         self._p.system.client_version().split(".")])
+
             self._build_method_dict()
-            rtorrent.rpc._build_rpc_methods(self,
-                                self._method_dict[self.__class__.__name__])
+            self._method_list = self._method_dict[self.__class__.__name__]
+            rtorrent.rpc._build_rpc_methods(self, self._method_list)
+
             self.update()
             assert self._meets_version_requirement() is True, \
                 "Error: Minimum rTorrent version required is {0}".format(
@@ -318,8 +320,8 @@ class RTorrent:
         @return: None
         """
         multicall = rtorrent.rpc.Multicall(self)
-        retriever_methods = [m for m in methods \
-                             if m.is_retriever() and m.is_available(self)]
+        retriever_methods = [m for m in self._method_list \
+                        if m.is_retriever() and m.is_available(self)]
         for method in retriever_methods:
             multicall.add(method)
 
