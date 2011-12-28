@@ -143,7 +143,7 @@ class RTorrent:
 
             self.download_list.append(result[0])
             self.torrents.append(
-                    Torrent(self._p, info_hash=result[0], **results_dict)
+                    Torrent(self, info_hash=result[0], **results_dict)
             )
 
         return(self.torrents)

@@ -54,7 +54,7 @@ class Torrent:
         methods = rtorrent.peer.methods
         retriever_methods = [m for m in methods if m.is_retriever()]
         # need to leave 2nd arg empty (dunno why)
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self._rt_obj)
         m.add("p.multicall", self.info_hash, "",
                 *[method.rpc_call + "=" for method in retriever_methods])
 
@@ -66,7 +66,7 @@ class Torrent:
             for m, r in zip(retriever_methods, result):
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            self.peers.append(Peer(self._p, self.info_hash, **results_dict))
+            self.peers.append(Peer(self._rt_obj, self.info_hash, **results_dict))
 
         return(self.peers)
 
@@ -82,7 +82,7 @@ class Torrent:
         methods = rtorrent.tracker.methods
         retriever_methods = [m for m in methods if m.is_retriever()]
         # need to leave 2nd arg empty (dunno why)
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self._rt_obj)
         m.add("t.multicall", self.info_hash, "",
                 *[method.rpc_call + "=" for method in retriever_methods])
 
@@ -94,7 +94,7 @@ class Torrent:
             for m, r in zip(retriever_methods, result):
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            self.trackers.append(Tracker(self._p, self.info_hash, **results_dict))
+            self.trackers.append(Tracker(self._rt_obj, self.info_hash, **results_dict))
 
         return(self.trackers)
 
@@ -111,7 +111,7 @@ class Torrent:
         methods = rtorrent.file.methods
         retriever_methods = [m for m in methods if m.is_retriever()]
         # 2nd arg can be anything, but it'll return all files in torrent regardless
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self._rt_obj)
         m.add("f.multicall", self.info_hash, "",
                 *[method.rpc_call + "=" for method in retriever_methods])
 
@@ -132,7 +132,7 @@ class Torrent:
             # get proper index positions for each file (based on the file offset)
             f_index = offset_list.index(results_dict["offset"])
 
-            self.files.append(File(self._p, self.info_hash, \
+            self.files.append(File(self._rt_obj, self.info_hash, \
                                    f_index, **results_dict))
 
         ### obsolete
@@ -150,7 +150,7 @@ class Torrent:
         Also doesn't restart after directory is set, that must be called
         separately.
         """
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self._rt_obj)
         self.multicall_add(m, "d.try_stop")
         self.multicall_add(m, "d.set_directory", d)
 
