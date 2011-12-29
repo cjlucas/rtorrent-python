@@ -24,5 +24,6 @@ Or you can install directly from PyPI:
 
 TODO
 ----
+- Add support for views
 - Logging support
 - Documentation and examples

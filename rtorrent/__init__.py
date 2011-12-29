@@ -120,8 +120,7 @@ class RTorrent:
         else:
             return(False)
 
-    def get_commands(self):
-        # TODO: rename this to get_rpc_methods()
+    def get_rpc_methods(self):
         """Get list of raw RPC commands supported by rTorrent
         
         @return: raw RPC commands

@@ -24,6 +24,9 @@ v0.2.3 (Not yet released)
       the rTorrent client supported said method. This will ensure that methods 
       aren't available if the client doesn't support it). You can use hasattr() 
       in order to avoid AttributeError being raised.
+      
+  - rtorrent.RTorrent
+    - renamed: get_commands to get_rpc_methods
 
   - rtorrent.rpc.Method
     - added: is_available(). This function will check if the Method instance is 
