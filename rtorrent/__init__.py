@@ -91,19 +91,6 @@ class RTorrent:
         except xmlrpclib.ResponseError:
             sys.stderr.write("*** Exception caught: ResponseError")
 
-############ DEPRECATED ########################################################
-#    def _check_commands(self):
-#        """Remove non-existing methods from RPC method lists"""
-#        for method_list in _all_methods_list:
-#            del_index = []
-#            for method in method_list:
-#                if method.rpc_call not in self.get_commands():
-#                    del_index.append(method_list.index(method))
-# 
-#            # reverse sort del_index so index positions don't get altered
-#            for i in sorted(del_index, reverse=True): del method_list[i]
-################################################################################
-
     def _build_method_dict(self):
         self._method_dict = {}
         for method_list in _all_methods_list:
@@ -505,10 +492,6 @@ _all_methods_list = [methods,
                     rtorrent.tracker.methods,
                     rtorrent.peer.methods,
 ]
-
-################################################################################
-# for l in _all_methods_list: _build_rpc_methods(l)
-################################################################################
 
 for c in [rtorrent.file.File,
           rtorrent.torrent.Torrent,
