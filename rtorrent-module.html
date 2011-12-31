@@ -57,13 +57,13 @@
 <h1 class="epydoc">Package rtorrent</h1><p class="nomargin-top"></p>
 <hr />
 <div class="fields">      <p><strong>Version:</strong>
-        0.2.2
+        0.2.3
       </p>
       <p><strong>Author:</strong>
         Chris Lucas
       </p>
       <p><strong>Contact:</strong>
-        cjlucas07@gmail.com
+        chris@chrisjlucas.com
       </p>
       <p><strong>License:</strong>
         MIT
@@ -88,6 +88,7 @@
   <tr><td class="summary">
   <ul class="nomargin">
     <li> <strong class="uidlink"><a href="rtorrent.common-module.html">rtorrent.common</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.err-module.html">rtorrent.err</a></strong>    </li>
     <li> <strong class="uidlink"><a href="rtorrent.file-module.html">rtorrent.file</a></strong>    </li>
     <li> <strong class="uidlink"><a href="rtorrent.lib-module.html">rtorrent.lib</a></strong>
     <ul>
@@ -162,23 +163,6 @@
       
     </td>
   </tr>
-<tr class="private">
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="_build_rpc_methods"></a><span class="summary-sig-name">_build_rpc_methods</span>(<span class="summary-sig-arg">method_list</span>)</span><br />
-      Build glorified aliases to raw RPC methods</td>
-          <td align="right" valign="top">
-            
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
 </table>
 <!-- ==================== VARIABLES ==================== -->
 <a name="section-Variables"></a>
@@ -244,21 +228,6 @@ ze_limit'&gt;,
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a href="rtorrent-module.html#l" class="summary-name">l</a> = <code title="[&lt;Method method_name='is_preferred', rpc_call='p.is_preferred'&gt;,
- &lt;Method method_name='get_down_rate', rpc_call='p.get_down_rate'&gt;,
- &lt;Method method_name='is_unwanted', rpc_call='p.is_unwanted'&gt;,
- &lt;Method method_name='get_peer_total', rpc_call='p.get_peer_total'&gt;,
- &lt;Method method_name='get_peer_rate', rpc_call='p.get_peer_rate'&gt;,
- &lt;Method method_name='get_port', rpc_call='p.get_port'&gt;,
- &lt;Method method_name='is_snubbed', rpc_call='p.is_snubbed'&gt;,
- &lt;Method method_name='get_id_html', rpc_call='p.get_id_html'&gt;,
-..."><code class="variable-group">[</code>&lt;Method method_name='is_preferred', rpc_call='p.is_prefer<code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
         <a href="rtorrent-module.html#methods" class="summary-name">methods</a> = <code title="[&lt;Method method_name='get_xmlrpc_size_limit', rpc_call='get_xmlrpc_siz\
 e_limit'&gt;,
  &lt;Method method_name='get_proxy_address', rpc_call='get_proxy_address'\
@@ -268,13 +237,6 @@ e_limit'&gt;,
  &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory_\
 usage'&gt;,
 ..."><code class="variable-group">[</code>&lt;Method method_name='get_xmlrpc_size_limit', rpc_ca<code class="variable-ellipsis">...</code></code>
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-        <a name="n"></a><span class="summary-name">n</span> = <code title="1">1</code>
     </td>
   </tr>
 </table>
@@ -316,32 +278,6 @@ ze_limit'&gt;<code class="variable-op">,</code>
 <code class="variable-op">,</code>
   &lt;Method method_name='get_up_limit', rpc_call='get_upload_rate'&gt;<code class="variable-op">,</code>
   &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
-<code class="variable-ellipsis">...</code>
-</pre></td></tr></table>
-</dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="l"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <h3 class="epydoc">l</h3>
-  
-  <dl class="fields">
-  </dl>
-  <dl class="fields">
-    <dt>Value:</dt>
-      <dd><table><tr><td><pre class="variable">
-<code class="variable-group">[</code>&lt;Method method_name='is_preferred', rpc_call='p.is_preferred'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='get_down_rate', rpc_call='p.get_down_rate'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='is_unwanted', rpc_call='p.is_unwanted'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='get_peer_total', rpc_call='p.get_peer_total'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='get_peer_rate', rpc_call='p.get_peer_rate'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='get_port', rpc_call='p.get_port'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='is_snubbed', rpc_call='p.is_snubbed'&gt;<code class="variable-op">,</code>
- &lt;Method method_name='get_id_html', rpc_call='p.get_id_html'&gt;<code class="variable-op">,</code>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -401,7 +337,7 @@ usage'&gt;<code class="variable-op">,</code>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Nov 12 17:55:46 2011
+    Generated by Epydoc 3.0.1 on Sat Dec 31 14:26:50 2011
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
