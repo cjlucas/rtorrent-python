@@ -1,4 +1,4 @@
-v0.2.3 (Not yet released)
+v0.2.3 (December 31, 2011)
 --------------------------------
 - added: min_version argument in rtorrent.rpc.Method, this will ensure
          the method will only be available when connected to an rTorrent
