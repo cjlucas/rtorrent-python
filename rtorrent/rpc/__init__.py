@@ -229,19 +229,19 @@ def _build_rpc_methods(class_obj, method_list):
         if class_name != class_obj.__class__.__name__: continue
 
         if class_name == "RTorrent":
-            caller = lambda self = class_obj, arg = None, method = m:\
+            caller = lambda arg = None, self = class_obj, method = m:\
                 call_method(self, method, bool_to_int(arg))
         elif class_name == "Torrent":
-            caller = lambda self = class_obj, arg = None, method = m:\
+            caller = lambda arg = None, self = class_obj, method = m:\
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
         elif class_name in ["Tracker", "File"]:
-            caller = lambda self = class_obj, arg = None, method = m:\
+            caller = lambda arg = None, self = class_obj, method = m:\
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
 
         elif class_name == "Peer":
-            caller = lambda self = class_obj, arg = None, method = m:\
+            caller = lambda arg = None, self = class_obj, method = m:\
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
 
