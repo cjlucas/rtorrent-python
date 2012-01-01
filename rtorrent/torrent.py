@@ -164,7 +164,7 @@ class Torrent:
 
     def start(self):
         """Start the torrent"""
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self._rt_obj)
         self.multicall_add(m, "d.try_start")
         self.multicall_add(m, "d.is_active")
 
@@ -172,7 +172,7 @@ class Torrent:
 
     def stop(self):
         """"Stop the torrent"""
-        m = rtorrent.rpc.Multicall(self._p)
+        m = rtorrent.rpc.Multicall(self._rt_obj)
         self.multicall_add(m, "d.try_stop")
         self.multicall_add(m, "d.is_active")
 
