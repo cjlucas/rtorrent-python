@@ -1,6 +1,7 @@
 v0.2.4 (January 01, 2012)
 -------------------------
-- fixed: fatal flaw that caused any "set" function to throw an AssertionError
+- fixed: critical bug that caused any "set" function to throw an AssertionError
+- fixed: critical bug in Torrent.start() and Torrent.stop()
 
 v0.2.3 (December 31, 2011)
 --------------------------
