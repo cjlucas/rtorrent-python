@@ -1,3 +1,17 @@
+v0.2.5 (February 05, 2012)
+--------------------------
+- added: support for caching trackers/files/peers after calling get_torrents() (Issue #6)
+
+- API CHANGES
+  - rtorrent.Torrent
+    - added: Torrent.erase()
+    - added: Torrent.close()
+    - changed: ratio is now converted to a float (Issue #5)
+  - rtorrent.rpc.Method
+    - added: post_process_func - specify a custom post processing method (Issue #4)
+             (look for get_ratio Method in rtorrent.torrent for an example)
+    
+
 v0.2.4 (January 01, 2012)
 -------------------------
 - fixed: critical bug that caused any "set" function to throw an AssertionError
