@@ -56,7 +56,8 @@ class Method:
         self.varname = varname #: variable for the result of the method call, usually set to self.varname
         self.min_version = min_version #: Minimum version of rTorrent required
         self.boolean = kwargs.get("boolean", False) #: returns boolean value?
-        self.required_args = [] #: Arguments required when calling the method
+        self.post_process_func = kwargs.get("post_process_func", None) #: custom post process function
+        self.required_args = [] #: Arguments required when calling the method (not utilized)
 
         self.method_type = self._get_method_type()
 
@@ -215,6 +216,10 @@ def process_result(method, result):
         - boolean - convert ones and zeros returned by rTorrent and 
         convert to python boolean values
     """
+    # handle custom post processing function
+    if method.post_process_func is not None:
+        result = method.post_process_func(result)
+
     # is boolean?
     if method.boolean:
         if result in [1, '1']: result = True
