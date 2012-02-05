@@ -169,6 +169,7 @@ class Torrent:
         self.multicall_add(m, "d.is_active")
 
         self.active = m.call()[-1]
+        return(self.active)
 
     def stop(self):
         """"Stop the torrent"""
@@ -177,6 +178,23 @@ class Torrent:
         self.multicall_add(m, "d.is_active")
 
         self.active = m.call()[-1]
+        return(self.active)
+
+    def close(self):
+        """Close the torrent and it's files"""
+        m = rtorrent.rpc.Multicall(self._rt_obj)
+        self.multicall_add(m, "d.close")
+
+        return(m.call()[-1])
+
+    def erase(self):
+        """Delete the torrent
+        
+        @note: doesn't delete the downloaded files"""
+        m = rtorrent.rpc.Multicall(self._rt_obj)
+        self.multicall_add(m, "d.erase")
+
+        return(m.call()[-1])
 
     def poll(self):
         """poll rTorrent to get latest peer/tracker/file information"""
@@ -232,7 +250,8 @@ methods = [
     Method(Torrent, 'get_tracker_size', 'd.get_tracker_size', None),
     Method(Torrent, 'is_multi_file', 'd.is_multi_file', None, boolean=True),
     Method(Torrent, 'get_local_id', 'd.get_local_id', None),
-    Method(Torrent, 'get_ratio', 'd.get_ratio', None),
+    Method(Torrent, 'get_ratio', 'd.get_ratio', None,
+           post_process_func=lambda x: x / 1000),
     Method(Torrent, 'get_loaded_file', 'd.get_loaded_file', None),
     Method(Torrent, 'get_max_file_size', 'd.get_max_file_size', None),
     Method(Torrent, 'get_size_chunks', 'd.get_size_chunks', None),
