@@ -58,6 +58,7 @@ class RTorrent:
         self._rpc_methods = [] #: List of rTorrent RPC methods
         self._p = None #: X{ServerProxy} instance
         self._connected = False
+        self._torrent_cache = []
 
         self._connect()
         if self._connected:
@@ -146,7 +147,20 @@ class RTorrent:
                     Torrent(self, info_hash=result[0], **results_dict)
             )
 
+        self._manage_torrent_cache()
         return(self.torrents)
+
+    def _manage_torrent_cache(self):
+        """Carry tracker/peer/file lists over to new torrent list"""
+        for torrent in self._torrent_cache:
+            new_torrent = rtorrent.common.find_torrent(torrent.info_hash,
+                                                       self.torrents)
+            if new_torrent != -1:
+                new_torrent.files = torrent.files
+                new_torrent.peers = torrent.peers
+                new_torrent.trackers = torrent.trackers
+
+        self._torrent_cache = self.torrents
 
     def _get_load_function(self, file_type, start, verbose):
         """Determine correct "load torrent" RPC method"""
