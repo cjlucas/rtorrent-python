@@ -69,6 +69,7 @@ rtorrent.RTorrent.get_rpc_methods	rtorrent.RTorrent-class.html#get_rpc_methods
 rtorrent.RTorrent.get_torrents	rtorrent.RTorrent-class.html#get_torrents
 rtorrent.RTorrent._meets_version_requirement	rtorrent.RTorrent-class.html#_meets_version_requirement
 rtorrent.RTorrent.rpc_prefix	rtorrent.RTorrent-class.html#rpc_prefix
+rtorrent.RTorrent._manage_torrent_cache	rtorrent.RTorrent-class.html#_manage_torrent_cache
 rtorrent.RTorrent._get_load_function	rtorrent.RTorrent-class.html#_get_load_function
 rtorrent.RTorrent.update	rtorrent.RTorrent-class.html#update
 rtorrent.RTorrent.set_dht_port	rtorrent.RTorrent-class.html#set_dht_port
@@ -123,8 +124,10 @@ rtorrent.torrent.Torrent.update	rtorrent.torrent.Torrent-class.html#update
 rtorrent.torrent.Torrent.multicall_add	rtorrent.torrent.Torrent-class.html#multicall_add
 rtorrent.torrent.Torrent.set_directory	rtorrent.torrent.Torrent-class.html#set_directory
 rtorrent.torrent.Torrent.start	rtorrent.torrent.Torrent-class.html#start
+rtorrent.torrent.Torrent.erase	rtorrent.torrent.Torrent-class.html#erase
 rtorrent.torrent.Torrent.__repr__	rtorrent.torrent.Torrent-class.html#__repr__
 rtorrent.torrent.Torrent.get_peers	rtorrent.torrent.Torrent-class.html#get_peers
+rtorrent.torrent.Torrent.close	rtorrent.torrent.Torrent-class.html#close
 rtorrent.torrent.Torrent.poll	rtorrent.torrent.Torrent-class.html#poll
 rtorrent.torrent.Torrent.__init__	rtorrent.torrent.Torrent-class.html#__init__
 rtorrent.tracker.Tracker	rtorrent.tracker.Tracker-class.html
