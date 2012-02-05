@@ -2,7 +2,7 @@ ABOUT THIS PROJECT
 ------------------
 The xmlrpc interface to rTorrent is extremely unintuitive and has very little documentation, this project aims to make interfacing with rTorrent much easier.
 
-This project is considered beta, so expect the API to change. All API changes will be noted in the CHANGELOG.
+NOTE: This project is considered beta, so expect the API to change. All API changes will be noted in the CHANGELOG.
 
 REQUIREMENTS
 ------------
@@ -20,7 +20,7 @@ If you're downloading the source:
 
 Or you can install directly from PyPI:
 
-```$ easy_install rtorrent-python```
+```$ pip install rtorrent-python```
 
 TODO
 ----
