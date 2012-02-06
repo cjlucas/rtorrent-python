@@ -251,7 +251,7 @@ methods = [
     Method(Torrent, 'is_multi_file', 'd.is_multi_file', None, boolean=True),
     Method(Torrent, 'get_local_id', 'd.get_local_id', None),
     Method(Torrent, 'get_ratio', 'd.get_ratio', None,
-           post_process_func=lambda x: x / 1000),
+           post_process_func=lambda x: x / 1000.0),
     Method(Torrent, 'get_loaded_file', 'd.get_loaded_file', None),
     Method(Torrent, 'get_max_file_size', 'd.get_max_file_size', None),
     Method(Torrent, 'get_size_chunks', 'd.get_size_chunks', None),
