@@ -127,7 +127,7 @@ class Multicall:
     def call(self):
         """Execute added multicall calls
         
-        @return: the results (post-processing), in the order they were added
+        @return: the results (post-processed), in the order they were added
         @rtype: tuple
         """
         m = xmlrpclib.MultiCall(self._proxy)
@@ -250,7 +250,17 @@ def _build_rpc_methods(class_obj, method_list):
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
 
-        if m.docstring is not None: caller.__doc__ = m.docstring
+        if m.docstring is None: m.docstring = ""
+
+        #print(m)
+        docstring = """{0}
+        
+        @note: Variable where the result for this method is stored: {1}.{2}""".format(
+                                                                    m.docstring,
+                                                                    class_name,
+                                                                    m.varname)
+
+        caller.__doc__ = docstring
 
         setattr(class_obj, m.method_name, caller)
 
