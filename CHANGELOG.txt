@@ -1,3 +1,14 @@
+v0.2.6 (February 11, 2012)
+--------------------------
+- fixed: Torrent.get_ratio() wasn't converting to float properly
+- added: documentation
+
+- API CHANGES
+  - rtorrent.Torrent
+    - added: Torrent.is_started()
+    - added: Torrent.is_paused()
+    - added: Torrent.is_hash_checking_queued()
+
 v0.2.5 (February 05, 2012)
 --------------------------
 - added: support for caching trackers/files/peers after calling get_torrents() (Issue #6)
