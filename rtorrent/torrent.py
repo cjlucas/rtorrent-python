@@ -43,9 +43,15 @@ class Torrent:
 
         self._method_list = self._rt_obj._method_dict[self.__class__.__name__]
         rtorrent.rpc._build_rpc_methods(self, self._method_list)
+        self._call_custom_methods()
 
     def __repr__(self):
         return("<Torrent info_hash=\"{0}\">".format(self.info_hash))
+
+    def _call_custom_methods(self):
+        self._is_hash_checking_queued()
+        self._is_started()
+        self._is_paused()
 
     def get_peers(self):
         """Get list of Peer instances for given torrent.
@@ -218,6 +224,61 @@ class Torrent:
         result = multicall.call()
         for m, r in zip(retriever_methods, result):
             setattr(self, m.varname, rtorrent.rpc.process_result(m, r))
+
+        # custom functions (only call private methods, since they only check
+        # local variables and are therefore faster)
+        self._call_custom_methods()
+
+    def _is_hash_checking_queued(self):
+        """Only checks instance variables, shouldn't be called directly"""
+        # if hashing == 3, then torrent is marked for hash checking
+        # if hash_checking == False, then torrent is waiting to be checked
+        self.hash_checking_queued = (self.hashing == 3 and \
+                                     self.hash_checking == False)
+
+        return(self.hash_checking_queued)
+
+    ############################################################################
+    # CUSTOM METHODS
+    ############################################################################
+
+    def is_hash_checking_queued(self):
+        """Check if torrent is waiting to be hash checked
+        
+        @note: Variable where the result for this method is stored Torrent.hash_checking_queued"""
+        m = rtorrent.rpc.Multicall(self._rt_obj)
+        self.multicall_add(m, "d.get_hashing")
+        self.multicall_add(m, "d.is_hash_checking")
+        results = m.call()
+
+        # this may be handled by Multicall in the future
+        # but for now, just update the variables manually
+        setattr(self, "hashing", results[0])
+        setattr(self, "hash_checking", results[1])
+
+        return(self._is_hash_checking_queued())
+
+    def _is_paused(self):
+        self.paused = (self.state == 0)
+        return(self.paused)
+
+    def is_paused(self):
+        """Check if torrent is paused
+        
+        @note: Variable where the result for this method is stored: Torrent.paused"""
+        self.get_state()
+        return(self._is_paused())
+
+    def _is_started(self):
+        self.started = (self.state == 1)
+        return(self.started)
+
+    def is_started(self):
+        """Check if torrent is started
+        
+        @note: Variable where the result for this method is stored: Torrent.started"""
+        self.get_state()
+        return(self._is_started())
 
 
 methods = [
