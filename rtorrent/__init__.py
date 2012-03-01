@@ -61,6 +61,7 @@ class RTorrent:
         self._torrent_cache = []
 
         self._connect()
+        assert self._connected is True, "rTorrent connection failed"
         if self._connected:
             self.client_version_tuple = tuple([int(i) for i in \
                         self._p.system.client_version().split(".")])
@@ -85,10 +86,10 @@ class RTorrent:
             self._rpc_methods = self._p.system.listMethods()
             self._connected = True
         except xmlrpclib.ProtocolError as err:
-            sys.stderr.write("*** Exception caught: ProtocolError")
-            sys.stderr.write("URL: {0}".format(err.url))
-            sys.stderr.write("Error code: {0}".format(err.errcode))
-            sys.stderr.write("Error message: {0}".format(err.errmsg))
+            sys.stderr.write("*** Exception caught: ProtocolError\n")
+            sys.stderr.write("URL: {0}\n".format(err.url))
+            sys.stderr.write("Error code: {0}\n".format(err.errcode))
+            sys.stderr.write("Error message: {0}\n".format(err.errmsg))
         except xmlrpclib.ResponseError:
             sys.stderr.write("*** Exception caught: ResponseError")
 
