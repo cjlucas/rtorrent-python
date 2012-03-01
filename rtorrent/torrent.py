@@ -202,6 +202,13 @@ class Torrent:
 
         return(m.call()[-1])
 
+    def check_hash(self):
+        """(Re)hash check the torrent"""
+        m = rtorrent.rpc.Multicall(self._rt_obj)
+        self.multicall_add(m, "d.check_hash")
+
+        return(m.call()[-1])
+
     def poll(self):
         """poll rTorrent to get latest peer/tracker/file information"""
         self.get_peers()
@@ -229,6 +236,9 @@ class Torrent:
         # local variables and are therefore faster)
         self._call_custom_methods()
 
+    ############################################################################
+    # CUSTOM METHODS
+    ############################################################################
     def _is_hash_checking_queued(self):
         """Only checks instance variables, shouldn't be called directly"""
         # if hashing == 3, then torrent is marked for hash checking
@@ -237,10 +247,6 @@ class Torrent:
                                      self.hash_checking == False)
 
         return(self.hash_checking_queued)
-
-    ############################################################################
-    # CUSTOM METHODS
-    ############################################################################
 
     def is_hash_checking_queued(self):
         """Check if torrent is waiting to be hash checked
