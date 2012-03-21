@@ -414,6 +414,8 @@ methods = [
     Method(RTorrent, 'get_up_total', 'get_up_total', None),
     Method(RTorrent, 'get_client_version', 'system.client_version', None),
     Method(RTorrent, 'get_library_version', 'system.library_version', None),
+    Method(RTorrent, 'get_api_version', 'system.api_version',
+           min_version=(0, 9, 1)), # only in HEAD currently
 
     # MODIFIERS
     Method(RTorrent, 'set_http_proxy', 'set_http_proxy', None),
