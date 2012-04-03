@@ -236,8 +236,18 @@ class Torrent:
         # local variables and are therefore faster)
         self._call_custom_methods()
 
+    def accept_seeders(self, accept_seeds):
+        if accept_seeds: call = "d.accepting_seeders.enable"
+        else: call = "d.accepting_seeders.disable"
+
+        m = rtorrent.rpc.Multicall(self._rt_obj)
+        self.multicall_add(m, call)
+
+        return(m.call()[-1])
+
+
     ############################################################################
-    # CUSTOM METHODS
+    # CUSTOM METHODS (Not part of the official rTorrent API)
     ############################################################################
     def _is_hash_checking_queued(self):
         """Only checks instance variables, shouldn't be called directly"""
@@ -354,6 +364,10 @@ methods = [
     Method(Torrent, 'get_bytes_done', 'd.get_bytes_done', None),
     Method(Torrent, 'get_up_rate', 'd.get_up_rate', None),
     Method(Torrent, 'get_up_total', 'd.get_up_total', None),
+    Method(Torrent, 'is_accepting_seeders', 'd.accepting_seeders', boolean=True),
+    Method(Torrent, "get_chunks_seen", "d.chunks_seen"),
+    Method(Torrent, "is_partially_done", "d.is_partially_done", boolean=True),
+    Method(Torrent, "is_not_partially_done", "d.is_not_partially_done", boolean=True),
 
     # testing
     Method(Torrent, 'fake_method', 'd.fake_method', None),
