@@ -69,24 +69,24 @@ class Tracker:
 
 methods = [
     # RETRIEVERS
-    Method(Tracker, 'is_enabled', 't.is_enabled', None, boolean=True),
-    Method(Tracker, 'get_id', 't.get_id', None),
-    Method(Tracker, 'get_scrape_incomplete', 't.get_scrape_incomplete', None),
-    Method(Tracker, 'is_open', 't.is_open', None, boolean=True),
-    Method(Tracker, 'get_min_interval', 't.get_min_interval', None),
-    Method(Tracker, 'get_scrape_downloaded', 't.get_scrape_downloaded', None),
-    Method(Tracker, 'get_group', 't.get_group', None),
-    Method(Tracker, 'get_scrape_time_last', 't.get_scrape_time_last', None),
-    Method(Tracker, 'get_type', 't.get_type', None),
-    Method(Tracker, 'get_normal_interval', 't.get_normal_interval', None),
-    Method(Tracker, 'get_url', 't.get_url', None),
-    Method(Tracker, 'get_scrape_complete', 't.get_scrape_complete', None),
-    Method(Tracker, 'get_activity_time_last', 't.activity_time_last', None),
-    Method(Tracker, 'get_activity_time_next', 't.activity_time_next', None),
-    Method(Tracker, 'get_failed_time_last', 't.failed_time_last', None),
-    Method(Tracker, 'get_failed_time_next', 't.failed_time_next', None),
-    Method(Tracker, 'get_success_time_last', 't.success_time_last', None),
-    Method(Tracker, 'get_success_time_next', 't.success_time_next', None),
+    Method(Tracker, 'is_enabled', 't.is_enabled', boolean=True),
+    Method(Tracker, 'get_id', 't.get_id'),
+    Method(Tracker, 'get_scrape_incomplete', 't.get_scrape_incomplete'),
+    Method(Tracker, 'is_open', 't.is_open', boolean=True),
+    Method(Tracker, 'get_min_interval', 't.get_min_interval'),
+    Method(Tracker, 'get_scrape_downloaded', 't.get_scrape_downloaded'),
+    Method(Tracker, 'get_group', 't.get_group'),
+    Method(Tracker, 'get_scrape_time_last', 't.get_scrape_time_last'),
+    Method(Tracker, 'get_type', 't.get_type'),
+    Method(Tracker, 'get_normal_interval', 't.get_normal_interval'),
+    Method(Tracker, 'get_url', 't.get_url'),
+    Method(Tracker, 'get_scrape_complete', 't.get_scrape_complete'),
+    Method(Tracker, 'get_activity_time_last', 't.activity_time_last'),
+    Method(Tracker, 'get_activity_time_next', 't.activity_time_next'),
+    Method(Tracker, 'get_failed_time_last', 't.failed_time_last'),
+    Method(Tracker, 'get_failed_time_next', 't.failed_time_next'),
+    Method(Tracker, 'get_success_time_last', 't.success_time_last'),
+    Method(Tracker, 'get_success_time_next', 't.success_time_next'),
     Method(Tracker, 'can_scrape', 't.can_scrape', boolean=True),
     Method(Tracker, 'get_failed_counter', 't.failed_counter'),
     Method(Tracker, 'get_scrape_counter', 't.scrape_counter'),
@@ -96,8 +96,8 @@ methods = [
     Method(Tracker, 'is_extra_tracker', 't.is_extra_tracker', boolean=True),
 
     # testing
-    Method(Tracker, 'fake_method', 't.fake_method', None),
+    Method(Tracker, 'fake_method', 't.fake_method'),
 
     # MODIFIERS
-    Method(Tracker, 'set_enabled', 't.set_enabled', None),
+    Method(Tracker, 'set_enabled', 't.set_enabled'),
 ]

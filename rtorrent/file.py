@@ -44,27 +44,27 @@ class File:
 
 methods = [
     # RETRIEVERS
-    Method(File, 'get_last_touched', 'f.get_last_touched', None),
-    Method(File, 'get_range_second', 'f.get_range_second', None),
-    Method(File, 'get_size_bytes', 'f.get_size_bytes', None),
-    Method(File, 'get_priority', 'f.get_priority', None),
-    Method(File, 'get_match_depth_next', 'f.get_match_depth_next', None),
-    Method(File, 'is_resize_queued', 'f.is_resize_queued', None, boolean=True),
-    Method(File, 'get_range_first', 'f.get_range_first', None),
-    Method(File, 'get_match_depth_prev', 'f.get_match_depth_prev', None),
-    Method(File, 'get_path', 'f.get_path', None),
-    Method(File, 'get_completed_chunks', 'f.get_completed_chunks', None),
-    Method(File, 'get_path_components', 'f.get_path_components', None),
-    Method(File, 'is_created', 'f.is_created', None, boolean=True),
-    Method(File, 'is_open', 'f.is_open', None, boolean=True),
-    Method(File, 'get_size_chunks', 'f.get_size_chunks', None),
-    Method(File, 'get_offset', 'f.get_offset', None),
-    Method(File, 'get_frozen_path', 'f.get_frozen_path', None),
-    Method(File, 'get_path_depth', 'f.get_path_depth', None),
-    Method(File, 'is_create_queued', 'f.is_create_queued', None, boolean=True),
+    Method(File, 'get_last_touched', 'f.get_last_touched'),
+    Method(File, 'get_range_second', 'f.get_range_second'),
+    Method(File, 'get_size_bytes', 'f.get_size_bytes'),
+    Method(File, 'get_priority', 'f.get_priority'),
+    Method(File, 'get_match_depth_next', 'f.get_match_depth_next'),
+    Method(File, 'is_resize_queued', 'f.is_resize_queued', boolean=True),
+    Method(File, 'get_range_first', 'f.get_range_first'),
+    Method(File, 'get_match_depth_prev', 'f.get_match_depth_prev'),
+    Method(File, 'get_path', 'f.get_path'),
+    Method(File, 'get_completed_chunks', 'f.get_completed_chunks'),
+    Method(File, 'get_path_components', 'f.get_path_components'),
+    Method(File, 'is_created', 'f.is_created', boolean=True),
+    Method(File, 'is_open', 'f.is_open', boolean=True),
+    Method(File, 'get_size_chunks', 'f.get_size_chunks'),
+    Method(File, 'get_offset', 'f.get_offset'),
+    Method(File, 'get_frozen_path', 'f.get_frozen_path'),
+    Method(File, 'get_path_depth', 'f.get_path_depth'),
+    Method(File, 'is_create_queued', 'f.is_create_queued', boolean=True),
 
     # testing
-    Method(File, 'fake_method', 'f.fake_method', None, boolean=True),
+    Method(File, 'fake_method', 'f.fake_method', boolean=True),
 
     # MODIFIERS
 ]
