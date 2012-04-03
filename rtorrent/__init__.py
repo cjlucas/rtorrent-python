@@ -37,7 +37,7 @@ else:
     from urllib2 import urlopen #@UnresolvedImport @Reimport
 
 
-__version__ = "0.2.7"
+__version__ = "0.2.8b"
 __author__ = "Chris Lucas"
 __contact__ = "chris@chrisjlucas.com"
 __license__ = "MIT"
@@ -347,6 +347,30 @@ def _build_class_methods(class_obj):
                         @param args: optional arguments to pass
                         """
     setattr(class_obj, "multicall_add", caller)
+
+def __compare_rpc_methods(rt_new, rt_old):
+    from pprint import pprint
+    rt_new_methods = set(rt_new.get_rpc_methods())
+    rt_old_methods = set(rt_old.get_rpc_methods())
+    print("New Methods:")
+    pprint(rt_new_methods - rt_old_methods)
+    print("Methods not in new rTorrent:")
+    pprint(rt_old_methods - rt_new_methods)
+
+def __check_supported_methods(rt):
+    from pprint import pprint
+    supported_methods = set([m.rpc_call for m in
+                             methods + \
+                             rtorrent.file.methods + \
+                             rtorrent.torrent.methods + \
+                             rtorrent.tracker.methods + \
+                             rtorrent.peer.methods])
+    all_methods = set(rt.get_rpc_methods())
+
+    print("Methods NOT in supported methods")
+    pprint(all_methods - supported_methods)
+    print("Supported methods NOT in all methods")
+    pprint(supported_methods - all_methods)
 
 methods = [
     # RETRIEVERS
