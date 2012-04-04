@@ -326,9 +326,7 @@ class RTorrent:
         for method in retriever_methods:
             multicall.add(method)
 
-        result = multicall.call()
-        for m, r in zip(retriever_methods, result):
-            setattr(self, m.varname, rtorrent.rpc.process_result(m, r))
+        multicall.call()
 
 def _build_class_methods(class_obj):
     # multicall add class

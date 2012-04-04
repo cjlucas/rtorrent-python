@@ -47,15 +47,13 @@ class Peer:
 
         @return: None
         """
-        multicall = rtorrent.rpc.Multicall(self._rt_obj)
+        multicall = rtorrent.rpc.Multicall(self)
         retriever_methods = [m for m in self._method_list \
                         if m.is_retriever() and m.is_available(self._rt_obj)]
         for method in retriever_methods:
             multicall.add(method, self.rpc_id)
 
-        result = multicall.call()
-        for m, r in zip(retriever_methods, result):
-            setattr(self, m.varname, rtorrent.rpc.process_result(m, r))
+        multicall.call()
 
 methods = [
     # RETRIEVERS

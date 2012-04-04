@@ -91,11 +91,11 @@ class Method:
             return(True)
 
 class Multicall:
-    def __init__(self, rt_obj, **kwargs):
-        self.rt_obj = rt_obj #: X{RTorrent} instance
-        self._proxy = self.rt_obj._p
-        #self.info_hash = kwargs.get("info_hash", None)
-        #self.index = kwargs.get("index", None)
+    def __init__(self, class_obj, **kwargs):
+        self.class_obj = class_obj
+        if class_obj.__class__.__name__ == "RTorrent": self.rt_obj = class_obj
+        else: self.rt_obj = class_obj._rt_obj
+        self._proxy = self.class_obj._p
         self.calls = []
 
     def add(self, method, *args):
@@ -142,8 +142,11 @@ class Multicall:
         results_processed = []
 
         for r, c in zip(results, self.calls):
-            method = c[0]
-            results_processed.append(process_result(method, r))
+            method = c[0] # Method instance
+            result = process_result(method, r)
+            results_processed.append(result)
+            # assign result to class_obj
+            setattr(self.class_obj, method.varname, result)
 
         return(tuple(results_processed))
 
@@ -172,7 +175,7 @@ def call_method(class_obj, method, *args):
         else:
             raise MethodError("RPC method '{0}' not found.".format(rpc_call))
 
-    m = Multicall(rt_obj)
+    m = Multicall(class_obj)
     m.add(method, *args)
     # only added one method, only getting one result back
     ret_value = m.call()[0]
@@ -185,7 +188,6 @@ def call_method(class_obj, method, *args):
         # but we'll return the value that xmlrpc gives us
         value = process_result(method, args[-1])
 
-    setattr(class_obj, method.varname, value)
     return(ret_value)
 
 
