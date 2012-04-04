@@ -94,6 +94,8 @@ methods = [
     Method(Tracker, 'is_usable', 't.is_usable', boolean=True),
     Method(Tracker, 'is_busy', 't.is_busy', boolean=True),
     Method(Tracker, 'is_extra_tracker', 't.is_extra_tracker', boolean=True),
+    Method(Tracker, "get_latest_sum_peers", "t.latest_sum_peers"),
+    Method(Tracker, "get_latest_new_peers", "t.latest_new_peers"),
 
     # testing
     Method(Tracker, 'fake_method', 't.fake_method'),

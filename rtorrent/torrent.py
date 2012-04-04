@@ -237,6 +237,10 @@ class Torrent:
         self._call_custom_methods()
 
     def accept_seeders(self, accept_seeds):
+        """Enable/disable whether the torrent connects to seeders
+        
+        @param accept_seeds: enable/disable accepting seeders 
+        @type accept_seeds: bool"""
         if accept_seeds: call = "d.accepting_seeders.enable"
         else: call = "d.accepting_seeders.disable"
 
@@ -349,7 +353,9 @@ methods = [
     Method(Torrent, 'get_size_pex', 'd.get_size_pex'),
     Method(Torrent, 'is_private', 'd.is_private', boolean=True),
     Method(Torrent, 'get_max_size_pex', 'd.get_max_size_pex'),
-    Method(Torrent, 'get_chunks_hashed', 'd.get_chunks_hashed'),
+    Method(Torrent, 'get_num_chunks_hashed', 'd.get_chunks_hashed',
+           aliases=("get_chunks_hashed",)),
+    Method(Torrent, 'get_num_chunks_wanted', 'd.wanted_chunks'),
     Method(Torrent, 'get_priority', 'd.get_priority'),
     Method(Torrent, 'get_skip_rate', 'd.get_skip_rate'),
     Method(Torrent, 'get_completed_bytes', 'd.get_completed_bytes'),
@@ -368,6 +374,7 @@ methods = [
     Method(Torrent, "get_chunks_seen", "d.chunks_seen"),
     Method(Torrent, "is_partially_done", "d.is_partially_done", boolean=True),
     Method(Torrent, "is_not_partially_done", "d.is_not_partially_done", boolean=True),
+    Method(Torrent, "get_time_started", "d.timestamp.started"),
 
     # testing
     Method(Torrent, 'fake_method', 'd.fake_method'),
