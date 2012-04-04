@@ -57,6 +57,7 @@ class Method:
         self.min_version = min_version #: Minimum version of rTorrent required
         self.boolean = kwargs.get("boolean", False) #: returns boolean value?
         self.post_process_func = kwargs.get("post_process_func", None) #: custom post process function
+        self.aliases = kwargs.get("aliases", []) #: aliases for method (optional)
         self.required_args = [] #: Arguments required when calling the method (not utilized)
 
         self.method_type = self._get_method_type()
@@ -262,5 +263,6 @@ def _build_rpc_methods(class_obj, method_list):
 
         caller.__doc__ = docstring
 
-        setattr(class_obj, m.method_name, caller)
+        for method_name in [m.method_name] + list(m.aliases):
+            setattr(class_obj, method_name, caller)
 
