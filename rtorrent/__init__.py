@@ -299,6 +299,10 @@ class RTorrent:
         """Alias for set_check_hash(False)"""
         self.set_check_hash(False)
 
+    def find_torrent(self, info_hash):
+        """Frontend for rtorrent.common.find_torrent"""
+        return(rtorrent.common.find_torrent(info_hash, self.get_torrents()))
+
     def poll(self):
         """ poll rTorrent to get latest torrent/peer/tracker/file information 
         
