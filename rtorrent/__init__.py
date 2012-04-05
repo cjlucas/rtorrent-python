@@ -66,9 +66,7 @@ class RTorrent:
             self.client_version_tuple = tuple([int(i) for i in \
                         self._p.system.client_version().split(".")])
 
-            self._build_method_dict()
-            self._method_list = self._method_dict[self.__class__.__name__]
-            rtorrent.rpc._build_rpc_methods(self, self._method_list)
+            rtorrent.rpc._build_rpc_methods(self, methods)
 
             self.update()
             assert self._meets_version_requirement() is True, \
@@ -93,14 +91,16 @@ class RTorrent:
         except xmlrpclib.ResponseError:
             sys.stderr.write("*** Exception caught: ResponseError")
 
-    def _build_method_dict(self):
-        self._method_dict = {}
-        for method_list in _all_methods_list:
-            for m in method_list:
-                if m.is_available(self):
-                    if m.class_name not in self._method_dict.keys():
-                        self._method_dict[m.class_name] = []
-                    self._method_dict[m.class_name].append(m)
+    ############### OBSOLETE ###################################################
+    # def _build_method_dict(self):
+    #    self._method_dict = {}
+    #    for method_list in _all_methods_list:
+    #        for m in method_list:
+    #            if m.is_available(self):
+    #                if m.class_name not in self._method_dict.keys():
+    #                    self._method_dict[m.class_name] = []
+    #                self._method_dict[m.class_name].append(m)
+    ############################################################################
 
     def _meets_version_requirement(self):
         """Check if rTorrent version is meets requirements"""
@@ -426,7 +426,9 @@ methods = [
     Method(RTorrent, 'get_stats_not_preloaded', 'get_stats_not_preloaded'),
     Method(RTorrent, 'get_memory_usage', 'get_memory_usage'),
     Method(RTorrent, 'get_connection_leech', 'get_connection_leech'),
-    Method(RTorrent, 'get_check_hash', 'get_check_hash', boolean=True),
+    Method(RTorrent, 'get_check_hash', 'get_check_hash',
+           boolean=True,
+           ),
     Method(RTorrent, 'get_session_lock', 'get_session_lock'),
     Method(RTorrent, 'get_preload_required_rate', 'get_preload_required_rate'),
     Method(RTorrent, 'get_max_uploads_global', 'get_max_uploads_global'),
@@ -435,36 +437,38 @@ methods = [
     Method(RTorrent, 'get_max_downloads_div', 'get_max_downloads_div'),
     Method(RTorrent, 'get_max_uploads_div', 'get_max_uploads_div'),
     Method(RTorrent, 'get_safe_sync', 'get_safe_sync'),
-   #Method(RTorrent, 'get_log.tracker', 'get_log.tracker'),
     Method(RTorrent, 'get_bind', 'get_bind'),
     Method(RTorrent, 'get_up_total', 'get_up_total'),
     Method(RTorrent, 'get_client_version', 'system.client_version'),
     Method(RTorrent, 'get_library_version', 'system.library_version'),
     Method(RTorrent, 'get_api_version', 'system.api_version',
-           min_version=(0, 9, 0)), # TODO: only in HEAD currently, update min_version when included in official release
-
+           min_version=(0, 9, 1)
+           ),
     Method(RTorrent, "get_system_time", "system.time",
-           """Get the current time of the system rTorrent is running on
+           docstring="""Get the current time of the system rTorrent is running on
            
            @return: time (posix)
-           @rtype: int"""),
+           @rtype: int""",
+           ),
 
     # MODIFIERS
     Method(RTorrent, 'set_http_proxy', 'set_http_proxy'),
     Method(RTorrent, 'set_max_memory_usage', 'set_max_memory_usage'),
     Method(RTorrent, 'set_max_file_size', 'set_max_file_size'),
     Method(RTorrent, 'set_bind', 'set_bind',
-           """Set address bind
+           docstring="""Set address bind
            
            @param arg: ip address
            @type arg: str
-           """),
+           """,
+           ),
     Method(RTorrent, 'set_up_limit', 'set_upload_rate',
-           """Set global upload limit (in bytes)
+           docstring="""Set global upload limit (in bytes)
            
            @param arg: speed limit
            @type arg: int
-           """),
+           """,
+           ),
     Method(RTorrent, 'set_port_random', 'set_port_random'),
     Method(RTorrent, 'set_connection_leech', 'set_connection_leech'),
     Method(RTorrent, 'set_tracker_numwant', 'set_tracker_numwant'),
@@ -485,11 +489,12 @@ methods = [
     Method(RTorrent, 'set_log.tracker', 'set_log.tracker'),
     Method(RTorrent, 'set_max_uploads_global', 'set_max_uploads_global'),
     Method(RTorrent, 'set_down_limit', 'set_download_rate',
-           """Set global download limit (in bytes)
+           docstring="""Set global download limit (in bytes)
            
            @param arg: speed limit
            @type arg: int
-           """),
+           """,
+           ),
     Method(RTorrent, 'set_preload_required_rate', 'set_preload_required_rate'),
     Method(RTorrent, 'set_hash_read_ahead', 'set_hash_read_ahead'),
     Method(RTorrent, 'set_max_peers_seed', 'set_max_peers_seed'),
@@ -516,19 +521,22 @@ methods = [
     Method(RTorrent, 'set_timeout_sync', 'set_timeout_sync'),
     Method(RTorrent, 'set_peer_exchange', 'set_peer_exchange'),
     Method(RTorrent, 'set_ip', 'set_ip',
-           """Set IP
+           docstring="""Set IP
            
            @param arg: ip address
            @type arg: str
-           """),
+           """,
+           ),
     Method(RTorrent, 'set_timeout_safe_sync', 'set_timeout_safe_sync'),
     Method(RTorrent, 'set_preload_type', 'set_preload_type'),
     Method(RTorrent, 'set_check_hash', 'set_check_hash',
-           """Enable/Disable hash checking on finished torrents
+           docstring="""Enable/Disable hash checking on finished torrents
         
             @param arg: True to enable, False to disable
             @type arg: bool
-            """, boolean=True),
+            """,
+            boolean=True,
+            ),
     # just testing
     Method(RTorrent, 'fake_method', 'get_fake_method'),
     Method(RTorrent, 'fake_method_dos', 'get_fake_method_dos',

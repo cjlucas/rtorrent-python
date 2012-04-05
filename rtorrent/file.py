@@ -36,8 +36,7 @@ class File:
 
         self.rpc_id = "{0}:f{1}".format(self.info_hash, self.index) #: unique id to pass to rTorrent
 
-        self._method_list = self._rt_obj._method_dict[self.__class__.__name__]
-        rtorrent.rpc._build_rpc_methods(self, self._method_list)
+        rtorrent.rpc._build_rpc_methods(self, methods)
 
     def __repr__(self):
         return("<File index={0} path=\"{1}\">".format(self.index, self.path))
@@ -49,19 +48,27 @@ methods = [
     Method(File, 'get_size_bytes', 'f.get_size_bytes'),
     Method(File, 'get_priority', 'f.get_priority'),
     Method(File, 'get_match_depth_next', 'f.get_match_depth_next'),
-    Method(File, 'is_resize_queued', 'f.is_resize_queued', boolean=True),
+    Method(File, 'is_resize_queued', 'f.is_resize_queued',
+           boolean=True,
+           ),
     Method(File, 'get_range_first', 'f.get_range_first'),
     Method(File, 'get_match_depth_prev', 'f.get_match_depth_prev'),
     Method(File, 'get_path', 'f.get_path'),
     Method(File, 'get_completed_chunks', 'f.get_completed_chunks'),
     Method(File, 'get_path_components', 'f.get_path_components'),
-    Method(File, 'is_created', 'f.is_created', boolean=True),
-    Method(File, 'is_open', 'f.is_open', boolean=True),
+    Method(File, 'is_created', 'f.is_created',
+           boolean=True,
+           ),
+    Method(File, 'is_open', 'f.is_open',
+           boolean=True,
+           ),
     Method(File, 'get_size_chunks', 'f.get_size_chunks'),
     Method(File, 'get_offset', 'f.get_offset'),
     Method(File, 'get_frozen_path', 'f.get_frozen_path'),
     Method(File, 'get_path_depth', 'f.get_path_depth'),
-    Method(File, 'is_create_queued', 'f.is_create_queued', boolean=True),
+    Method(File, 'is_create_queued', 'f.is_create_queued',
+           boolean=True,
+           ),
 
     # testing
     Method(File, 'fake_method', 'f.fake_method', boolean=True),

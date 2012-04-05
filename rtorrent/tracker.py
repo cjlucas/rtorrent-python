@@ -37,8 +37,7 @@ class Tracker:
         self.index = self.group #: position of tracker within the torrent's tracker list
         self.rpc_id = "{0}:t{1}".format(self.info_hash, self.index) #: unique id to pass to rTorrent
 
-        self._method_list = self._rt_obj._method_dict[self.__class__.__name__]
-        rtorrent.rpc._build_rpc_methods(self, self._method_list)
+        rtorrent.rpc._build_rpc_methods(self, methods)
 
     def __repr__(self):
         return("<Tracker index={0}, url=\"{1}\">".format(self.index, self.url))
@@ -78,22 +77,58 @@ methods = [
     Method(Tracker, 'get_type', 't.get_type'),
     Method(Tracker, 'get_normal_interval', 't.get_normal_interval'),
     Method(Tracker, 'get_url', 't.get_url'),
-    Method(Tracker, 'get_scrape_complete', 't.get_scrape_complete'),
-    Method(Tracker, 'get_activity_time_last', 't.activity_time_last'),
-    Method(Tracker, 'get_activity_time_next', 't.activity_time_next'),
-    Method(Tracker, 'get_failed_time_last', 't.failed_time_last'),
-    Method(Tracker, 'get_failed_time_next', 't.failed_time_next'),
-    Method(Tracker, 'get_success_time_last', 't.success_time_last'),
-    Method(Tracker, 'get_success_time_next', 't.success_time_next'),
-    Method(Tracker, 'can_scrape', 't.can_scrape', boolean=True),
-    Method(Tracker, 'get_failed_counter', 't.failed_counter'),
-    Method(Tracker, 'get_scrape_counter', 't.scrape_counter'),
-    Method(Tracker, 'get_success_counter', 't.success_counter'),
-    Method(Tracker, 'is_usable', 't.is_usable', boolean=True),
-    Method(Tracker, 'is_busy', 't.is_busy', boolean=True),
-    Method(Tracker, 'is_extra_tracker', 't.is_extra_tracker', boolean=True),
-    Method(Tracker, "get_latest_sum_peers", "t.latest_sum_peers"),
-    Method(Tracker, "get_latest_new_peers", "t.latest_new_peers"),
+    Method(Tracker, 'get_scrape_complete', 't.get_scrape_complete',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'get_activity_time_last', 't.activity_time_last',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'get_activity_time_next', 't.activity_time_next',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'get_failed_time_last', 't.failed_time_last',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'get_failed_time_next', 't.failed_time_next',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'get_success_time_last', 't.success_time_last',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'get_success_time_next', 't.success_time_next',
+           min_version=(0, 8, 9),
+           ),
+    Method(Tracker, 'can_scrape', 't.can_scrape',
+           min_version=(0, 9, 1),
+           boolean=True
+           ),
+    Method(Tracker, 'get_failed_counter', 't.failed_counter',
+           min_version=(0, 8, 9)
+           ),
+    Method(Tracker, 'get_scrape_counter', 't.scrape_counter',
+           min_version=(0, 8, 9)
+           ),
+    Method(Tracker, 'get_success_counter', 't.success_counter',
+           min_version=(0, 8, 9)
+           ),
+    Method(Tracker, 'is_usable', 't.is_usable',
+           min_version=(0, 9, 1),
+           boolean=True
+           ),
+    Method(Tracker, 'is_busy', 't.is_busy',
+           min_version=(0, 9, 1),
+           boolean=True
+           ),
+    Method(Tracker, 'is_extra_tracker', 't.is_extra_tracker',
+           min_version=(0, 9, 1),
+           boolean=True,
+           ),
+    Method(Tracker, "get_latest_sum_peers", "t.latest_sum_peers",
+           min_version=(0, 9, 0)
+           ),
+    Method(Tracker, "get_latest_new_peers", "t.latest_new_peers",
+           min_version=(0, 9, 0)
+           ),
 
     # testing
     Method(Tracker, 'fake_method', 't.fake_method'),
