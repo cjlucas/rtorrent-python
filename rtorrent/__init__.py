@@ -66,8 +66,6 @@ class RTorrent:
             self.client_version_tuple = tuple([int(i) for i in \
                         self._p.system.client_version().split(".")])
 
-            rtorrent.rpc._build_rpc_methods(self, methods)
-
             self.update()
             assert self._meets_version_requirement() is True, \
                 "Error: Minimum rTorrent version required is {0}".format(
@@ -550,8 +548,12 @@ _all_methods_list = [methods,
                     rtorrent.peer.methods,
 ]
 
-for c in [rtorrent.file.File,
-          rtorrent.torrent.Torrent,
-          rtorrent.tracker.Tracker,
-          rtorrent.peer.Peer]:
+class_methods_pair = {
+    rtorrent.file.File : rtorrent.file.methods,
+    rtorrent.torrent.Torrent : rtorrent.torrent.methods,
+    rtorrent.tracker.Tracker : rtorrent.tracker.methods,
+    rtorrent.peer.Peer : rtorrent.peer.methods,
+}
+for c in class_methods_pair.keys():
+    rtorrent.rpc._build_rpc_methods(c, class_methods_pair[c])
     _build_class_methods(c)

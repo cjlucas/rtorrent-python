@@ -34,8 +34,6 @@ class Peer:
 
         self.rpc_id = "{0}:p{1}".format(self.info_hash, self.id) #: unique id to pass to rTorrent
 
-        rtorrent.rpc._build_rpc_methods(self, methods)
-
     def __repr__(self):
         return("<Peer id={0}>".format(self.id))
 

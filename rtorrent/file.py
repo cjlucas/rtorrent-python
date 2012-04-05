@@ -36,8 +36,6 @@ class File:
 
         self.rpc_id = "{0}:f{1}".format(self.info_hash, self.index) #: unique id to pass to rTorrent
 
-        rtorrent.rpc._build_rpc_methods(self, methods)
-
     def update(self):
         """Refresh file data
         

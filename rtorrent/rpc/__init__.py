@@ -172,8 +172,10 @@ def call_method(class_obj, method, *args):
     if method.is_retriever(): args = args[:-1]
     else: assert args[-1] is not None, "No argument given."
 
-    if class_obj.__class__.__name__ == "RTorrent": rt_obj = class_obj
-    else: rt_obj = class_obj._rt_obj
+    if class_obj.__class__.__name__ == "RTorrent":
+        rt_obj = class_obj
+    else:
+        rt_obj = class_obj._rt_obj
 
 
     # check if rpc method is even available
@@ -237,26 +239,26 @@ def process_result(method, result):
 
     return(result)
 
-def _build_rpc_methods(class_obj, method_list):
+def _build_rpc_methods(class_, method_list):
     """Build glorified aliases to raw RPC methods"""
     for m in method_list:
         class_name = m.class_name
-        if class_name != class_obj.__class__.__name__: continue
+        if class_name != class_.__name__: continue
 
         if class_name == "RTorrent":
-            caller = lambda arg = None, self = class_obj, method = m:\
+            caller = lambda self, arg = None, method = m:\
                 call_method(self, method, bool_to_int(arg))
         elif class_name == "Torrent":
-            caller = lambda arg = None, self = class_obj, method = m:\
+            caller = lambda self, arg = None, method = m:\
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
         elif class_name in ["Tracker", "File"]:
-            caller = lambda arg = None, self = class_obj, method = m:\
+            caller = lambda self, arg = None, method = m:\
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
 
         elif class_name == "Peer":
-            caller = lambda arg = None, self = class_obj, method = m:\
+            caller = lambda self, arg = None, method = m:\
                 call_method(self, method, self.rpc_id,
                                          bool_to_int(arg))
 
@@ -273,5 +275,5 @@ def _build_rpc_methods(class_obj, method_list):
         caller.__doc__ = docstring
 
         for method_name in [m.method_name] + list(m.aliases):
-            setattr(class_obj, method_name, caller)
+            setattr(class_, method_name, caller)
 

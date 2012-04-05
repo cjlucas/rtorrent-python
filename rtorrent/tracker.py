@@ -37,8 +37,6 @@ class Tracker:
         self.index = self.group #: position of tracker within the torrent's tracker list
         self.rpc_id = "{0}:t{1}".format(self.info_hash, self.index) #: unique id to pass to rTorrent
 
-        rtorrent.rpc._build_rpc_methods(self, methods)
-
     def __repr__(self):
         return("<Tracker index={0}, url=\"{1}\">".format(self.index, self.url))
 

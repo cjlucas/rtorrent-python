@@ -44,7 +44,6 @@ class Torrent:
         self.trackers = []
         self.files = []
 
-        rtorrent.rpc._build_rpc_methods(self, methods)
         self._call_custom_methods()
 
     def __repr__(self):
