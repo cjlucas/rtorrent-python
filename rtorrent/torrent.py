@@ -52,11 +52,8 @@ class Torrent:
                                                             self.info_hash,
                                                             self.name))
 
-    def __str__(self):
-        return("TEST")
-
     def _call_custom_methods(self):
-        """ only calls methods that check instance variables. """
+        """only calls methods that check instance variables."""
         self._is_hash_checking_queued()
         self._is_started()
         self._is_paused()
