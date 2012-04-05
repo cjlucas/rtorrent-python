@@ -20,10 +20,13 @@
 
 import rtorrent.rpc
 #from rtorrent.rpc import Method
-from rtorrent.peer import Peer
-from rtorrent.tracker import Tracker
-from rtorrent.file import File
+import rtorrent.peer
+import rtorrent.tracker
+import rtorrent.file
 
+Peer = rtorrent.peer.Peer
+Tracker = rtorrent.tracker.Tracker
+File = rtorrent.file.File
 Method = rtorrent.rpc.Method
 
 class Torrent:
@@ -62,9 +65,8 @@ class Torrent:
         @note: also assigns return value to self.peers
         """
         self.peers = []
-        #methods = rtorrent.peer.methods
-        methods = self._rt_obj._method_dict["Peer"]
-        retriever_methods = [m for m in methods if m.is_retriever()]
+        retriever_methods = [m for m in rtorrent.peer.methods \
+                        if m.is_retriever() and m.is_available(self._rt_obj)]
         # need to leave 2nd arg empty (dunno why)
         m = rtorrent.rpc.Multicall(self)
         m.add("p.multicall", self.info_hash, "",
@@ -91,8 +93,9 @@ class Torrent:
         @note: also assigns return value to self.trackers
         """
         self.trackers = []
-        methods = self._rt_obj._method_dict["Tracker"]
-        retriever_methods = [m for m in methods if m.is_retriever()]
+        retriever_methods = [m for m in rtorrent.tracker.methods \
+                        if m.is_retriever() and m.is_available(self._rt_obj)]
+
         # need to leave 2nd arg empty (dunno why)
         m = rtorrent.rpc.Multicall(self)
         m.add("t.multicall", self.info_hash, "",
@@ -120,8 +123,8 @@ class Torrent:
         """
 
         self.files = []
-        methods = self._rt_obj._method_dict["File"]
-        retriever_methods = [m for m in methods if m.is_retriever()]
+        retriever_methods = [m for m in rtorrent.file.methods \
+                        if m.is_retriever() and m.is_available(self._rt_obj)]
         # 2nd arg can be anything, but it'll return all files in torrent regardless
         m = rtorrent.rpc.Multicall(self)
         m.add("f.multicall", self.info_hash, "",
