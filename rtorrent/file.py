@@ -38,6 +38,21 @@ class File:
 
         rtorrent.rpc._build_rpc_methods(self, methods)
 
+    def update(self):
+        """Refresh file data
+        
+        @note: All fields are stored as attributes to self.
+
+        @return: None
+        """
+        multicall = rtorrent.rpc.Multicall(self)
+        retriever_methods = [m for m in methods \
+                        if m.is_retriever() and m.is_available(self._rt_obj)]
+        for method in retriever_methods:
+            multicall.add(method, self.rpc_id)
+
+        multicall.call()
+
     def __repr__(self):
         return("<File index={0} path=\"{1}\">".format(self.index, self.path))
 
