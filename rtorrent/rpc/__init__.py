@@ -20,7 +20,7 @@
 
 import rtorrent
 import re
-from rtorrent.common import _py3, bool_to_int
+from rtorrent.common import _py3, bool_to_int, convert_version_tuple_to_str
 from rtorrent.err import RTorrentVersionError, MethodError
 
 if _py3: import xmlrpc.client as xmlrpclib #@UnresolvedImport
@@ -38,6 +38,16 @@ def get_varname(rpc_call):
     if r: return(r.groups()[-1])
     else: return(None)
 
+def _handle_unavailable_rpc_method(method, rt_obj):
+    msg = "Method isn't available."
+    if rt_obj.client_version_tuple < method.min_version:
+        msg = "This method is only available in " \
+                "RTorrent version v{0} or later".format(
+                            convert_version_tuple_to_str(method.min_version))
+
+    raise MethodError(msg)
+
+
 class DummyClass:
     def __init__(self):
         pass
@@ -46,15 +56,14 @@ class Method:
     """Represents an individual RPC method"""
 
     def __init__(self, _class, method_name,
-                 rpc_call, docstring=None, varname=None,
-                 min_version=(0, 0, 0), **kwargs):
+                 rpc_call, docstring=None, varname=None, **kwargs):
         self._class = _class #: Class this method is associated with
         self.class_name = _class.__name__
         self.method_name = method_name #: name of public-facing method
         self.rpc_call = rpc_call #: name of rpc method
         self.docstring = docstring #: docstring for rpc method (optional)
         self.varname = varname #: variable for the result of the method call, usually set to self.varname
-        self.min_version = min_version #: Minimum version of rTorrent required
+        self.min_version = kwargs.get("min_version", (0, 0, 0)) #: Minimum version of rTorrent required
         self.boolean = kwargs.get("boolean", False) #: returns boolean value?
         self.post_process_func = kwargs.get("post_process_func", None) #: custom post process function
         self.aliases = kwargs.get("aliases", []) #: aliases for method (optional)
@@ -118,7 +127,8 @@ class Multicall:
                 method = result
 
         # ensure method is available before adding
-        assert method.is_available(self.rt_obj), "Method unavailable."
+        if not method.is_available(self.rt_obj):
+            _handle_unavailable_rpc_method(method, self.rt_obj)
 
         self.calls.append((method, args))
 
@@ -151,7 +161,7 @@ class Multicall:
         return(tuple(results_processed))
 
 def call_method(class_obj, method, *args):
-    """Handles single RPC call and assigns result to varname
+    """Handles single RPC calls
     
     @param class_obj: Peer/File/Torrent/Tracker/RTorrent instance
     @type class_obj: object
@@ -162,31 +172,28 @@ def call_method(class_obj, method, *args):
     if method.is_retriever(): args = args[:-1]
     else: assert args[-1] is not None, "No argument given."
 
-    rpc_call = method.rpc_call
     if class_obj.__class__.__name__ == "RTorrent": rt_obj = class_obj
     else: rt_obj = class_obj._rt_obj
 
+
     # check if rpc method is even available
-    if rpc_call not in rt_obj._rpc_methods:
-        # check if rTorrent meets minimum version requirement of the method
-        if rt_obj.client_version_tuple < method.min_version:
-            raise RTorrentVersionError(method.min_version,
-                                       rt_obj.client_version_tuple)
-        else:
-            raise MethodError("RPC method '{0}' not found.".format(rpc_call))
+    if not method.is_available(rt_obj):
+        _handle_unavailable_rpc_method(method, rt_obj)
 
     m = Multicall(class_obj)
     m.add(method, *args)
     # only added one method, only getting one result back
     ret_value = m.call()[0]
 
-    if method.is_retriever():
-        #value = process_result(method, ret_value)
-        value = ret_value #MultiCall already processed the result
-    else:
-        # we're setting the user's input to method.varname
-        # but we'll return the value that xmlrpc gives us
-        value = process_result(method, args[-1])
+    ####### OBSOLETE ##########################################################
+    # if method.is_retriever():
+    #    #value = process_result(method, ret_value)
+    #    value = ret_value #MultiCall already processed the result
+    # else:
+    #    # we're setting the user's input to method.varname
+    #    # but we'll return the value that xmlrpc gives us
+    #    value = process_result(method, args[-1])
+    ############################################################################
 
     return(ret_value)
 
