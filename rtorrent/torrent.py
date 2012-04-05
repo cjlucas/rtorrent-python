@@ -242,6 +242,12 @@ class Torrent:
 
         return(m.call()[-1])
 
+    def announce(self):
+        """Announce torrent info to tracker(s)"""
+        m = rtorrent.rpc.Multicall(self)
+        self.multicall_add(m, "d.tracker_announce")
+
+        return(m.call()[-1])
 
     ############################################################################
     # CUSTOM METHODS (Not part of the official rTorrent API)
@@ -264,8 +270,6 @@ class Torrent:
         self.multicall_add(m, "d.is_hash_checking")
         results = m.call()
 
-        # this may be handled by Multicall in the future
-        # but for now, just update the variables manually
         setattr(self, "hashing", results[0])
         setattr(self, "hash_checking", results[1])
 
@@ -298,8 +302,12 @@ class Torrent:
 
 methods = [
     # RETRIEVERS
-    Method(Torrent, 'is_hash_checked', 'd.is_hash_checked', boolean=True),
-    Method(Torrent, 'is_hash_checking', 'd.is_hash_checking', boolean=True),
+    Method(Torrent, 'is_hash_checked', 'd.is_hash_checked',
+           boolean=True,
+           ),
+    Method(Torrent, 'is_hash_checking', 'd.is_hash_checking',
+           boolean=True,
+           ),
     Method(Torrent, 'get_peers_max', 'd.get_peers_max'),
     Method(Torrent, 'get_tracker_focus', 'd.get_tracker_focus'),
     Method(Torrent, 'get_skip_total', 'd.get_skip_total'),
@@ -309,12 +317,16 @@ methods = [
     Method(Torrent, 'get_connection_seed', 'd.get_connection_seed'),
     Method(Torrent, 'get_uploads_max', 'd.get_uploads_max'),
     Method(Torrent, 'get_priority_str', 'd.get_priority_str'),
-    Method(Torrent, 'is_open', 'd.is_open', boolean=True),
+    Method(Torrent, 'is_open', 'd.is_open',
+           boolean=True,
+           ),
     Method(Torrent, 'get_peers_min', 'd.get_peers_min'),
     Method(Torrent, 'get_peers_complete', 'd.get_peers_complete'),
     Method(Torrent, 'get_tracker_numwant', 'd.get_tracker_numwant'),
     Method(Torrent, 'get_connection_current', 'd.get_connection_current'),
-    Method(Torrent, 'is_complete', 'd.get_complete', boolean=True),
+    Method(Torrent, 'is_complete', 'd.get_complete',
+           boolean=True,
+           ),
     Method(Torrent, 'get_peers_connected', 'd.get_peers_connected'),
     Method(Torrent, 'get_chunk_size', 'd.get_chunk_size'),
     Method(Torrent, 'get_state_counter', 'd.get_state_counter'),
@@ -322,23 +334,32 @@ methods = [
     Method(Torrent, 'get_state_changed', 'd.get_state_changed'),
     Method(Torrent, 'get_peers_not_connected', 'd.get_peers_not_connected'),
     Method(Torrent, 'get_directory', 'd.get_directory'),
-    Method(Torrent, 'is_incomplete', 'd.incomplete', boolean=True),
+    Method(Torrent, 'is_incomplete', 'd.incomplete',
+           boolean=True,
+           ),
     Method(Torrent, 'get_tracker_size', 'd.get_tracker_size'),
-    Method(Torrent, 'is_multi_file', 'd.is_multi_file', boolean=True),
+    Method(Torrent, 'is_multi_file', 'd.is_multi_file',
+           boolean=True,
+           ),
     Method(Torrent, 'get_local_id', 'd.get_local_id'),
-    Method(Torrent, 'get_ratio', 'd.get_ratio', None,
-           post_process_func=lambda x: x / 1000.0),
+    Method(Torrent, 'get_ratio', 'd.get_ratio',
+           post_process_func=lambda x: x / 1000.0,
+           ),
     Method(Torrent, 'get_loaded_file', 'd.get_loaded_file'),
     Method(Torrent, 'get_max_file_size', 'd.get_max_file_size'),
     Method(Torrent, 'get_size_chunks', 'd.get_size_chunks'),
-    Method(Torrent, 'is_pex_active', 'd.is_pex_active', boolean=True),
+    Method(Torrent, 'is_pex_active', 'd.is_pex_active',
+           boolean=True,
+           ),
     Method(Torrent, 'get_hashing', 'd.get_hashing'),
     Method(Torrent, 'get_bitfield', 'd.get_bitfield'),
     Method(Torrent, 'get_local_id_html', 'd.get_local_id_html'),
     Method(Torrent, 'get_connection_leech', 'd.get_connection_leech'),
     Method(Torrent, 'get_peers_accounted', 'd.get_peers_accounted'),
     Method(Torrent, 'get_message', 'd.get_message'),
-    Method(Torrent, 'is_active', 'd.is_active', boolean=True),
+    Method(Torrent, 'is_active', 'd.is_active',
+           boolean=True,
+           ),
     Method(Torrent, 'get_size_bytes', 'd.get_size_bytes'),
     Method(Torrent, 'get_ignore_commands', 'd.get_ignore_commands'),
     Method(Torrent, 'get_creation_date', 'd.get_creation_date'),
@@ -346,7 +367,9 @@ methods = [
     Method(Torrent, 'get_left_bytes', 'd.get_left_bytes'),
     Method(Torrent, 'get_size_files', 'd.get_size_files'),
     Method(Torrent, 'get_size_pex', 'd.get_size_pex'),
-    Method(Torrent, 'is_private', 'd.is_private', boolean=True),
+    Method(Torrent, 'is_private', 'd.is_private',
+           boolean=True,
+           ),
     Method(Torrent, 'get_max_size_pex', 'd.get_max_size_pex'),
     Method(Torrent, 'get_num_chunks_hashed', 'd.get_chunks_hashed',
            aliases=("get_chunks_hashed",)),
@@ -365,10 +388,18 @@ methods = [
     Method(Torrent, 'get_bytes_done', 'd.get_bytes_done'),
     Method(Torrent, 'get_up_rate', 'd.get_up_rate'),
     Method(Torrent, 'get_up_total', 'd.get_up_total'),
-    Method(Torrent, 'is_accepting_seeders', 'd.accepting_seeders', boolean=True),
-    Method(Torrent, "get_chunks_seen", "d.chunks_seen"),
-    Method(Torrent, "is_partially_done", "d.is_partially_done", boolean=True),
-    Method(Torrent, "is_not_partially_done", "d.is_not_partially_done", boolean=True),
+    Method(Torrent, 'is_accepting_seeders', 'd.accepting_seeders',
+           boolean=True,
+           ),
+    Method(Torrent, "get_chunks_seen", "d.chunks_seen",
+           min_version=(0, 9, 1),
+           ),
+    Method(Torrent, "is_partially_done", "d.is_partially_done",
+           boolean=True,
+           ),
+    Method(Torrent, "is_not_partially_done", "d.is_not_partially_done",
+           boolean=True,
+           ),
     Method(Torrent, "get_time_started", "d.timestamp.started"),
 
     # testing
