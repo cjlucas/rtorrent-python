@@ -48,7 +48,12 @@ class Torrent:
         self._call_custom_methods()
 
     def __repr__(self):
-        return("<Torrent info_hash=\"{0}\">".format(self.info_hash))
+        return("<Torrent info_hash=\"{0}\" name=\"{1}\">".format(
+                                                            self.info_hash,
+                                                            self.name))
+
+    def __str__(self):
+        return("TEST")
 
     def _call_custom_methods(self):
         """ only calls methods that check instance variables. """
