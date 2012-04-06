@@ -1,3 +1,59 @@
+v0.2.8 (April 6, 2012)
+----------------------
+- General
+  - Previously, instance methods for RTorrent and it's child classes weren't
+    created if the version of rTorrent being connected to didn't support them.
+    Now, all instance methods calls will be created, but ones that aren't
+    supported by the connected rTorrent client will throw a MethodError when called.
+    
+    This also goes for methods being added to a Multicall instance via Multicall.add()
+
+- rtorrent.RTorrent
+  - get_api_version()
+  - get_system_time()
+    
+- rtorrent.torrent.Torrent
+  - added: announce()
+  - added: accept_seeders()
+  - added: is_accepting_seeders()
+  - added: get_chunks_seen()
+  - added: is_partially_done()
+  - added: is_not_partially_done()
+  - added: get_time_started()
+  - added: get_num_chunks_wanted()
+  - renamed: get_chunks_hashed() to get_num_chunks_hashed()
+    
+- rtorrent.tracker.Tracker
+  - added: get_activity_time_last()
+  - added: get_activity_time_next()
+  - added: get_failed_time_last()
+  - added: get_failed_time_next()
+  - added: get_success_time_last()
+  - added: get_success_time_next()
+  - added: can_scrape()
+  - added: get_failed_counter()
+  - added: get_scrape_counter()
+  - added: get_success_counter()
+  - added: is_usable()
+  - added: is_busy()
+  - added: is_extra_tracker()
+  - added: get_latest_sum_peers()
+  - added: get_latest_new_peers()
+  
+- rtorrent.file.File
+  - added: update()
+    
+- rtorrent.rpc.Method
+  - added support for aliases so there can be some backwards 
+    compatibility if methods are renamed
+      
+- rtorrent.rpc.Multicall
+  - Multicall now sets the results of the call to the instance object given (Issue #7)
+  - Because Multicall.call() now assigns the result of a method call to the
+    calling, Multicall now needs the calling object as an input instead of 
+    just the instance of RTorrent
+    
+    
 v0.2.7 (March 1, 2012)
 ----------------------
 - fixed: RTorrent instances are no longer created if the connection to the XMLRPC server fails
