@@ -45,10 +45,6 @@
         <!-- hide/show private -->
         <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
-        <tr><td align="right"><span class="options"
-            >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="rtorrent-module.html"
-            target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
@@ -57,7 +53,7 @@
 <h1 class="epydoc">Package rtorrent</h1><p class="nomargin-top"></p>
 <hr />
 <div class="fields">      <p><strong>Version:</strong>
-        0.2.6
+        0.2.8
       </p>
       <p><strong>Author:</strong>
         Chris Lucas
@@ -153,6 +149,39 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="__check_supported_methods"></a><span class="summary-sig-name">__check_supported_methods</span>(<span class="summary-sig-arg">rt</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__compare_rpc_methods"></a><span class="summary-sig-name">__compare_rpc_methods</span>(<span class="summary-sig-arg">rt_new</span>,
+        <span class="summary-sig-arg">rt_old</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="_build_class_methods"></a><span class="summary-sig-name">_build_class_methods</span>(<span class="summary-sig-arg">class_obj</span>)</span></td>
           <td align="right" valign="top">
             
@@ -228,6 +257,21 @@ ze_limit'&gt;,
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
+        <a href="rtorrent-module.html#class_methods_pair" class="summary-name">class_methods_pair</a> = <code title="{&lt;class rtorrent.tracker.Tracker at 0x108b71390&gt;: [&lt;Method method_name\
+='is_enabled', rpc_call='t.is_enabled'&gt;,
+                                                   &lt;Method method_name\
+='get_id', rpc_call='t.get_id'&gt;,
+                                                   &lt;Method method_name\
+='get_scrape_incomplete', rpc_call='t.get_scrape_incomplete'&gt;,
+                                                   &lt;Method method_name\
+='is_open', rpc_call='t.is_open'&gt;,
+..."><code class="variable-group">{</code>&lt;class rtorrent.tracker.Tracker at 0x108<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
         <a href="rtorrent-module.html#methods" class="summary-name">methods</a> = <code title="[&lt;Method method_name='get_xmlrpc_size_limit', rpc_call='get_xmlrpc_siz\
 e_limit'&gt;,
  &lt;Method method_name='get_proxy_address', rpc_call='get_proxy_address'\
@@ -278,6 +322,32 @@ ze_limit'&gt;<code class="variable-op">,</code>
 <code class="variable-op">,</code>
   &lt;Method method_name='get_up_limit', rpc_call='get_upload_rate'&gt;<code class="variable-op">,</code>
   &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="class_methods_pair"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">class_methods_pair</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code>&lt;class rtorrent.tracker.Tracker at 0x108b71390&gt;<code class="variable-op">: </code><code class="variable-group">[</code>&lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='is_enabled', rpc_call='t.is_enabled'&gt;<code class="variable-op">,</code>
+                                                   &lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='get_id', rpc_call='t.get_id'&gt;<code class="variable-op">,</code>
+                                                   &lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='get_scrape_incomplete', rpc_call='t.get_scrape_incomplete'&gt;<code class="variable-op">,</code>
+                                                   &lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='is_open', rpc_call='t.is_open'&gt;<code class="variable-op">,</code>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -337,7 +407,7 @@ usage'&gt;<code class="variable-op">,</code>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sat Feb 11 18:23:36 2012
+    Generated by Epydoc 3.0.1 on Fri Apr  6 18:47:23 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

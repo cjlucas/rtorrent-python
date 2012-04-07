@@ -1,17 +1,429 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
-          "DTD/xhtml1-frameset.dtd">
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title> API Documentation </title>
+  <title>rtorrent</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
 </head>
-<frameset cols="20%,80%">
-  <frameset rows="30%,70%">
-    <frame src="toc.html" name="moduleListFrame"
-           id="moduleListFrame" />
-    <frame src="toc-everything.html" name="moduleFrame"
-           id="moduleFrame" />
-  </frameset>
-  <frame src="rtorrent-module.html" name="mainFrame" id="mainFrame" />
-</frameset>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;rtorrent
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PACKAGE DESCRIPTION ==================== -->
+<h1 class="epydoc">Package rtorrent</h1><p class="nomargin-top"></p>
+<hr />
+<div class="fields">      <p><strong>Version:</strong>
+        0.2.8
+      </p>
+      <p><strong>Author:</strong>
+        Chris Lucas
+      </p>
+      <p><strong>Contact:</strong>
+        chris@chrisjlucas.com
+      </p>
+      <p><strong>License:</strong>
+        MIT
+      </p>
+</div><!-- ==================== SUBMODULES ==================== -->
+<a name="section-Submodules"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Submodules</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Submodules"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr><td class="summary">
+  <ul class="nomargin">
+    <li> <strong class="uidlink"><a href="rtorrent.common-module.html">rtorrent.common</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.err-module.html">rtorrent.err</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.file-module.html">rtorrent.file</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.lib-module.html">rtorrent.lib</a></strong>
+    <ul>
+    <li> <strong class="uidlink"><a href="rtorrent.lib.bencode-module.html">rtorrent.lib.bencode</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.lib.torrentparser-module.html">rtorrent.lib.torrentparser</a></strong>    </li>
+    </ul>
+    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.peer-module.html">rtorrent.peer</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.rpc-module.html">rtorrent.rpc</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.torrent-module.html">rtorrent.torrent</a></strong>    </li>
+    <li> <strong class="uidlink"><a href="rtorrent.tracker-module.html">rtorrent.tracker</a></strong>    </li>
+  </ul></td></tr>
+</table>
+
+<br />
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="rtorrent.RTorrent-class.html" class="summary-name">RTorrent</a><br />
+      Create a new rTorrent connection
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__check_supported_methods"></a><span class="summary-sig-name">__check_supported_methods</span>(<span class="summary-sig-arg">rt</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="__compare_rpc_methods"></a><span class="summary-sig-name">__compare_rpc_methods</span>(<span class="summary-sig-arg">rt_new</span>,
+        <span class="summary-sig-arg">rt_old</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_build_class_methods"></a><span class="summary-sig-name">_build_class_methods</span>(<span class="summary-sig-arg">class_obj</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MIN_RTORRENT_VERSION"></a><span class="summary-name">MIN_RTORRENT_VERSION</span> = <code title="(0, 8, 1)"><code class="variable-group">(</code>0<code class="variable-op">, </code>8<code class="variable-op">, </code>1<code class="variable-group">)</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MIN_RTORRENT_VERSION_STR"></a><span class="summary-name">MIN_RTORRENT_VERSION_STR</span> = <code title="'0.8.1'"><code class="variable-quote">'</code><code class="variable-string">0.8.1</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'rtorrent'"><code class="variable-quote">'</code><code class="variable-string">rtorrent</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="rtorrent-module.html#_all_methods_list" class="summary-name" onclick="show_private();">_all_methods_list</a> = <code title="[[&lt;Method method_name='get_xmlrpc_size_limit', rpc_call='get_xmlrpc_si\
+ze_limit'&gt;,
+  &lt;Method method_name='get_proxy_address', rpc_call='get_proxy_address\
+'&gt;,
+  &lt;Method method_name='get_split_suffix', rpc_call='get_split_suffix'&gt;\
+,
+  &lt;Method method_name='get_up_limit', rpc_call='get_upload_rate'&gt;,
+  &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory\
+..."><code class="variable-group">[</code><code class="variable-group">[</code>&lt;Method method_name='get_xmlrpc_size_lim<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_py3"></a><span class="summary-name">_py3</span> = <code title="False">False</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="rtorrent-module.html#class_methods_pair" class="summary-name">class_methods_pair</a> = <code title="{&lt;class rtorrent.tracker.Tracker at 0x108b71390&gt;: [&lt;Method method_name\
+='is_enabled', rpc_call='t.is_enabled'&gt;,
+                                                   &lt;Method method_name\
+='get_id', rpc_call='t.get_id'&gt;,
+                                                   &lt;Method method_name\
+='get_scrape_incomplete', rpc_call='t.get_scrape_incomplete'&gt;,
+                                                   &lt;Method method_name\
+='is_open', rpc_call='t.is_open'&gt;,
+..."><code class="variable-group">{</code>&lt;class rtorrent.tracker.Tracker at 0x108<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="rtorrent-module.html#methods" class="summary-name">methods</a> = <code title="[&lt;Method method_name='get_xmlrpc_size_limit', rpc_call='get_xmlrpc_siz\
+e_limit'&gt;,
+ &lt;Method method_name='get_proxy_address', rpc_call='get_proxy_address'\
+&gt;,
+ &lt;Method method_name='get_split_suffix', rpc_call='get_split_suffix'&gt;,
+ &lt;Method method_name='get_up_limit', rpc_call='get_upload_rate'&gt;,
+ &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory_\
+usage'&gt;,
+..."><code class="variable-group">[</code>&lt;Method method_name='get_xmlrpc_size_limit', rpc_ca<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="_all_methods_list"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">_all_methods_list</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-group">[</code>&lt;Method method_name='get_xmlrpc_size_limit', rpc_call='get_xmlrpc_si<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ze_limit'&gt;<code class="variable-op">,</code>
+  &lt;Method method_name='get_proxy_address', rpc_call='get_proxy_address<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+'&gt;<code class="variable-op">,</code>
+  &lt;Method method_name='get_split_suffix', rpc_call='get_split_suffix'&gt;<code class="variable-op"></code><span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-op">,</code>
+  &lt;Method method_name='get_up_limit', rpc_call='get_upload_rate'&gt;<code class="variable-op">,</code>
+  &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="class_methods_pair"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">class_methods_pair</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code>&lt;class rtorrent.tracker.Tracker at 0x108b71390&gt;<code class="variable-op">: </code><code class="variable-group">[</code>&lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='is_enabled', rpc_call='t.is_enabled'&gt;<code class="variable-op">,</code>
+                                                   &lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='get_id', rpc_call='t.get_id'&gt;<code class="variable-op">,</code>
+                                                   &lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='get_scrape_incomplete', rpc_call='t.get_scrape_incomplete'&gt;<code class="variable-op">,</code>
+                                                   &lt;Method method_name<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+='is_open', rpc_call='t.is_open'&gt;<code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="methods"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">methods</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code>&lt;Method method_name='get_xmlrpc_size_limit', rpc_call='get_xmlrpc_siz<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+e_limit'&gt;<code class="variable-op">,</code>
+ &lt;Method method_name='get_proxy_address', rpc_call='get_proxy_address'<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+&gt;<code class="variable-op">,</code>
+ &lt;Method method_name='get_split_suffix', rpc_call='get_split_suffix'&gt;<code class="variable-op">,</code>
+ &lt;Method method_name='get_up_limit', rpc_call='get_upload_rate'&gt;<code class="variable-op">,</code>
+ &lt;Method method_name='get_max_memory_usage', rpc_call='get_max_memory_<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+usage'&gt;<code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Apr  6 18:47:23 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
 </html>
