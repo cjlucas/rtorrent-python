@@ -54,7 +54,6 @@ class RTorrent:
         self.url = url #: From X{__init__(self, url)}
         self._verbose = _verbose
         self.torrents = [] #: List of L{Torrent} instances
-        self.download_list = [] #: List of torrent info hashes
         self._rpc_methods = [] #: List of rTorrent RPC methods
         self._torrent_cache = []
 
@@ -120,7 +119,6 @@ class RTorrent:
         @todo: add validity check for specified view
         """
         self.torrents = []
-        self.download_list = []
         methods = rtorrent.torrent.methods
         retriever_methods = [m for m in methods \
                              if m.is_retriever() and m.is_available(self)]
@@ -137,7 +135,6 @@ class RTorrent:
             for m, r in zip(retriever_methods, result[1:]): # result[0] is the info_hash
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            self.download_list.append(result[0])
             self.torrents.append(
                     Torrent(self, info_hash=result[0], **results_dict)
             )
@@ -223,12 +220,12 @@ class RTorrent:
             i = 0
             while i < MAX_RETRIES:
                 self.get_torrents()
-                if info_hash in self.download_list: break
+                if info_hash in [t.info_hash for t in self.torrents]: break
 
                 time.sleep(1) # was still getting AssertionErrors, delay should help
                 i += 1
 
-            assert info_hash in self.download_list, "Adding torrent was unsuccessful."
+            assert info_hash in [t.info_hash for t in self.torrents], "Adding torrent was unsuccessful."
 
         return(find_torrent(info_hash, self.torrents))
 
