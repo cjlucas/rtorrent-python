@@ -90,8 +90,5 @@ methods = [
     Method(Peer, 'get_client_version', 'p.client_version'),
     Method(Peer, 'get_up_total', 'p.get_up_total'),
 
-    # testing
-    Method(Peer, 'fake_method', 'p._fake_method'),
-
     # MODIFIERS
 ]

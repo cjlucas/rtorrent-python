@@ -404,9 +404,6 @@ methods = [
            ),
     Method(Torrent, "get_time_started", "d.timestamp.started"),
 
-    # testing
-    Method(Torrent, 'fake_method', 'd.fake_method'),
-
     # MODIFIERS
     Method(Torrent, 'set_uploads_max', 'd.set_uploads_max'),
     Method(Torrent, 'set_tied_to_file', 'd.set_tied_to_file'),

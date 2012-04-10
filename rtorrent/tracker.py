@@ -127,9 +127,6 @@ methods = [
            min_version=(0, 9, 0)
            ),
 
-    # testing
-    Method(Tracker, 'fake_method', 't.fake_method'),
-
     # MODIFIERS
     Method(Tracker, 'set_enabled', 't.set_enabled'),
 ]

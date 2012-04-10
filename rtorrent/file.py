@@ -82,8 +82,6 @@ methods = [
            boolean=True,
            ),
 
-    # testing
-    Method(File, 'fake_method', 'f.fake_method', boolean=True),
 
     # MODIFIERS
 ]
