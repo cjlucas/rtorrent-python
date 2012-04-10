@@ -37,7 +37,7 @@ else:
     from urllib2 import urlopen #@UnresolvedImport @Reimport
 
 
-__version__ = "0.2.9b"
+__version__ = "0.2.9"
 __author__ = "Chris Lucas"
 __contact__ = "chris@chrisjlucas.com"
 __license__ = "MIT"
@@ -530,10 +530,6 @@ methods = [
             """,
             boolean=True,
             ),
-    # just testing
-    Method(RTorrent, 'fake_method', 'get_fake_method'),
-    Method(RTorrent, 'fake_method_dos', 'get_fake_method_dos',
-           min_version=(9, 9, 9)),
 ]
 
 _all_methods_list = [methods,

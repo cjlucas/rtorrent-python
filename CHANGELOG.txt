@@ -1,3 +1,17 @@
+v0.2.9 (April 10, 2012)
+-----------------------
+- General
+  - improvement: rtorrent-python now creates a new http connection with every 
+    Multicall instance, this was to fix issues caused by calls being made 
+    simultaneously using the same RTorrent instance
+    
+  - fixed: an issue which prevented rtorrent.RTorrent rpc methods from
+    being built (bug introduced in v0.2.8) 
+  
+- rtorrent.RTorrent
+  - removed: all instances of RTorrent.download_list
+    (replaced with [t.info_hash for t in RTorrent.torrents])
+  
 v0.2.8 (April 6, 2012)
 ----------------------
 - General
