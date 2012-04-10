@@ -34,7 +34,6 @@ class Torrent:
 
     def __init__(self, _rt_obj, info_hash, **kwargs):
         self._rt_obj = _rt_obj
-        self._p = self._rt_obj._p #: X{ServerProxy} instance
         self.info_hash = info_hash #: info hash for the torrent
         self.rpc_id = self.info_hash #: unique id to pass to rTorrent
         for k in kwargs.keys():

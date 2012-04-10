@@ -37,7 +37,7 @@ else:
     from urllib2 import urlopen #@UnresolvedImport @Reimport
 
 
-__version__ = "0.2.8"
+__version__ = "0.2.9b"
 __author__ = "Chris Lucas"
 __contact__ = "chris@chrisjlucas.com"
 __license__ = "MIT"
@@ -56,49 +56,45 @@ class RTorrent:
         self.torrents = [] #: List of L{Torrent} instances
         self.download_list = [] #: List of torrent info hashes
         self._rpc_methods = [] #: List of rTorrent RPC methods
-        self._p = None #: X{ServerProxy} instance
-        self._connected = False
         self._torrent_cache = []
 
-        self._connect()
-        assert self._connected is True, "rTorrent connection failed"
-        if self._connected:
-            self.client_version_tuple = tuple([int(i) for i in \
-                        self._p.system.client_version().split(".")])
+        assert self._verify_conn(self._get_xmlrpc_conn()) \
+            is True, "rTorrent connection failed"
 
-            self.update()
-            assert self._meets_version_requirement() is True, \
-                "Error: Minimum rTorrent version required is {0}".format(
-                                                    MIN_RTORRENT_VERSION_STR)
-            self.get_torrents()
+        self.client_version_tuple = tuple([int(i) for i in \
+                    self._get_xmlrpc_conn().system.client_version().split(".")])
 
-    def _connect(self):
-        """Create rTorrent connection"""
-        self._connected = False
-        self._p = xmlrpclib.ServerProxy(self.url, verbose=self._verbose)
+        assert self._meets_version_requirement() is True, \
+            "Error: Minimum rTorrent version required is {0}".format(
+                                                MIN_RTORRENT_VERSION_STR)
 
+        self.update()
+        self.get_torrents()
+
+    def _get_xmlrpc_conn(self):
+        """Get ServerProxy instance"""
+        return(xmlrpclib.ServerProxy(self.url, verbose=self._verbose))
+
+    def _verify_conn(self, conn):
+        """Verify given ServerProxy connection is to an rTorrent XMLRPC server"""
         try:
-            # will fail if url given is invalid
-            self._rpc_methods = self._p.system.listMethods()
-            self._connected = True
+            self._rpc_methods = conn.system.listMethods()
         except xmlrpclib.ProtocolError as err:
             sys.stderr.write("*** Exception caught: ProtocolError\n")
             sys.stderr.write("URL: {0}\n".format(err.url))
             sys.stderr.write("Error code: {0}\n".format(err.errcode))
             sys.stderr.write("Error message: {0}\n".format(err.errmsg))
+            return(False)
         except xmlrpclib.ResponseError:
             sys.stderr.write("*** Exception caught: ResponseError")
+            return(False)
 
-    ############### OBSOLETE ###################################################
-    # def _build_method_dict(self):
-    #    self._method_dict = {}
-    #    for method_list in _all_methods_list:
-    #        for m in method_list:
-    #            if m.is_available(self):
-    #                if m.class_name not in self._method_dict.keys():
-    #                    self._method_dict[m.class_name] = []
-    #                self._method_dict[m.class_name].append(m)
-    ############################################################################
+        # simple check, probably sufficient
+        if "system.client_version" not in self._rpc_methods \
+        or "system.library_version" not in self._rpc_methods:
+            return(False)
+        else:
+            return(True)
 
     def _meets_version_requirement(self):
         """Check if rTorrent version is meets requirements"""
@@ -212,6 +208,7 @@ class RTorrent:
         this function doesn't execute instantaneously. If that's what you're
         looking for, use load_torrent_simple() instead.
         """
+        p = self._get_xmlrpc_conn()
         tp = TorrentParser(torrent)
         torrent = xmlrpclib.Binary(tp._raw_torrent)
         info_hash = tp.info_hash
@@ -219,7 +216,7 @@ class RTorrent:
         func_name = self._get_load_function("raw", start, verbose)
 
         # load torrent
-        getattr(self._p, func_name)(torrent)
+        getattr(p, func_name)(torrent)
 
         if verify_load:
             MAX_RETRIES = 3
@@ -261,6 +258,7 @@ class RTorrent:
         verification that the torrent was successfully added to rTorrent. 
         Use load_torrent() if you would like these features.
         """
+        p = self._get_xmlrpc_conn()
 
         assert file_type in ["raw", "file", "url"], \
             "Invalid file_type, options are: 'url', 'file', 'raw'."
@@ -276,7 +274,7 @@ class RTorrent:
         if file_type in ["raw", "file"]:    finput = xmlrpclib.Binary(torrent)
         elif file_type == "url":            finput = torrent
 
-        getattr(self._p, func_name)(finput)
+        getattr(p, func_name)(finput)
 
     def set_dht_port(self, port):
         """Set DHT port

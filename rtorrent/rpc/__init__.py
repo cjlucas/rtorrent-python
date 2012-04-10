@@ -104,7 +104,6 @@ class Multicall:
         self.class_obj = class_obj
         if class_obj.__class__.__name__ == "RTorrent": self.rt_obj = class_obj
         else: self.rt_obj = class_obj._rt_obj
-        self._proxy = self.class_obj._p
         self.calls = []
 
     def add(self, method, *args):
@@ -141,7 +140,7 @@ class Multicall:
         @return: the results (post-processed), in the order they were added
         @rtype: tuple
         """
-        m = xmlrpclib.MultiCall(self._proxy)
+        m = xmlrpclib.MultiCall(self.rt_obj._get_xmlrpc_conn())
         for call in self.calls:
             method, args = call
             rpc_call = getattr(method, "rpc_call")

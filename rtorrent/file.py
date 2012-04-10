@@ -28,7 +28,6 @@ class File:
 
     def __init__(self, _rt_obj, info_hash, index, **kwargs):
         self._rt_obj = _rt_obj
-        self._p = self._rt_obj._p #: X{ServerProxy} instance
         self.info_hash = info_hash #: info hash for the torrent the file is associated with
         self.index = index #: The position of the file within the file list
         for k in kwargs.keys():
