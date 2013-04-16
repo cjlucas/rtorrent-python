@@ -25,11 +25,11 @@ Or you can install directly from PyPI:
 ROADMAP
 -------
 - v0.3.0
-  - [x] Add support for Torrent "custom" fields
-  - [ ] Allow xmlrpclib subclasses
-  - [ ] Add option for fast RTorrent init (skip paranoid check)
+  - Add support for Torrent "custom" fields
+  - Allow xmlrpclib subclasses
+  - Add option for fast RTorrent init (skip paranoid check)
 
 - unknown
-  - [ ] Logging support
-  - [ ] Documentation and examples
-  - [ ] Add support for views
+  - Logging support
+  - Documentation and examples
+  - Add support for views
