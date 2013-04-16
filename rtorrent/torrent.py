@@ -258,6 +258,51 @@ class Torrent:
 
         return(m.call()[-1])
 
+    @staticmethod
+    def _assert_custom_key_valid(key):
+        assert type(key) == int and key > 0 and key < 6, \
+            "key must be an integer between 1-5"
+
+    def get_custom(self, key):
+        """
+        Get custom value
+
+        @param key: the index for the custom field (between 1-5)
+        @type key: int
+
+        @rtype: str
+        """
+
+        self._assert_custom_key_valid(key)
+        m = rtorrent.rpc.Multicall(self)
+
+        field = "custom{0}".format(key)
+        self.multicall_add(m, "d.get_{0}".format(field))
+        setattr(self, field, m.call()[-1])
+
+        return (getattr(self, field))
+
+    def set_custom(self, key, value):
+        """
+        Set custom value
+
+        @param key: the index for the custom field (between 1-5)
+        @type key: int
+
+        @param value: the value to be stored
+        @type value: str
+
+        @return: if successful, value will be returned
+        @rtype: str
+        """
+
+        self._assert_custom_key_valid(key)
+        m = rtorrent.rpc.Multicall(self)
+
+        self.multicall_add(m, "d.set_custom{0}".format(key), value)
+
+        return(m.call()[-1])
+
     ############################################################################
     # CUSTOM METHODS (Not part of the official rTorrent API)
     ##########################################################################
@@ -266,7 +311,7 @@ class Torrent:
         # if hashing == 3, then torrent is marked for hash checking
         # if hash_checking == False, then torrent is waiting to be checked
         self.hash_checking_queued = (self.hashing == 3 and
-                                     self.hash_checking == False)
+                                     self.hash_checking is False)
 
         return(self.hash_checking_queued)
 
@@ -410,12 +455,16 @@ methods = [
            boolean=True,
            ),
     Method(Torrent, "get_time_started", "d.timestamp.started"),
+    Method(Torrent, "get_custom1", "d.get_custom1"),
+    Method(Torrent, "get_custom2", "d.get_custom2"),
+    Method(Torrent, "get_custom3", "d.get_custom3"),
+    Method(Torrent, "get_custom4", "d.get_custom4"),
+    Method(Torrent, "get_custom5", "d.get_custom5"),
 
     # MODIFIERS
     Method(Torrent, 'set_uploads_max', 'd.set_uploads_max'),
     Method(Torrent, 'set_tied_to_file', 'd.set_tied_to_file'),
     Method(Torrent, 'set_tracker_numwant', 'd.set_tracker_numwant'),
-    Method(Torrent, 'set_custom', 'd.set_custom'),
     Method(Torrent, 'set_priority', 'd.set_priority'),
     Method(Torrent, 'set_peers_max', 'd.set_peers_max'),
     Method(Torrent, 'set_hashing_failed', 'd.set_hashing_failed'),
