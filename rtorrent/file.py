@@ -6,10 +6,10 @@
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject to
 # the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -18,33 +18,35 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#from rtorrent.rpc import Method
+# from rtorrent.rpc import Method
 import rtorrent.rpc
 
 Method = rtorrent.rpc.Method
+
 
 class File:
     """Represents an individual file within a L{Torrent} instance."""
 
     def __init__(self, _rt_obj, info_hash, index, **kwargs):
         self._rt_obj = _rt_obj
-        self.info_hash = info_hash #: info hash for the torrent the file is associated with
-        self.index = index #: The position of the file within the file list
+        self.info_hash = info_hash  # : info hash for the torrent the file is associated with
+        self.index = index  # : The position of the file within the file list
         for k in kwargs.keys():
             setattr(self, k, kwargs.get(k, None))
 
-        self.rpc_id = "{0}:f{1}".format(self.info_hash, self.index) #: unique id to pass to rTorrent
+        self.rpc_id = "{0}:f{1}".format(
+            self.info_hash, self.index)  # : unique id to pass to rTorrent
 
     def update(self):
         """Refresh file data
-        
+
         @note: All fields are stored as attributes to self.
 
         @return: None
         """
         multicall = rtorrent.rpc.Multicall(self)
-        retriever_methods = [m for m in methods \
-                        if m.is_retriever() and m.is_available(self._rt_obj)]
+        retriever_methods = [m for m in methods
+                             if m.is_retriever() and m.is_available(self._rt_obj)]
         for method in retriever_methods:
             multicall.add(method, self.rpc_id)
 

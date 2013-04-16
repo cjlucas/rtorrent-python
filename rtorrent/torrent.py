@@ -6,10 +6,10 @@
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject to
 # the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import rtorrent.rpc
-#from rtorrent.rpc import Method
+# from rtorrent.rpc import Method
 import rtorrent.peer
 import rtorrent.tracker
 import rtorrent.file
@@ -29,13 +29,14 @@ Tracker = rtorrent.tracker.Tracker
 File = rtorrent.file.File
 Method = rtorrent.rpc.Method
 
+
 class Torrent:
     """Represents an individual torrent within a L{RTorrent} instance."""
 
     def __init__(self, _rt_obj, info_hash, **kwargs):
         self._rt_obj = _rt_obj
-        self.info_hash = info_hash #: info hash for the torrent
-        self.rpc_id = self.info_hash #: unique id to pass to rTorrent
+        self.info_hash = info_hash  # : info hash for the torrent
+        self.rpc_id = self.info_hash  # : unique id to pass to rTorrent
         for k in kwargs.keys():
             setattr(self, k, kwargs.get(k, None))
 
@@ -47,8 +48,8 @@ class Torrent:
 
     def __repr__(self):
         return("<Torrent info_hash=\"{0}\" name=\"{1}\">".format(
-                                                            self.info_hash,
-                                                            self.name))
+            self.info_hash,
+            self.name))
 
     def _call_custom_methods(self):
         """only calls methods that check instance variables."""
@@ -65,14 +66,14 @@ class Torrent:
         @note: also assigns return value to self.peers
         """
         self.peers = []
-        retriever_methods = [m for m in rtorrent.peer.methods \
-                        if m.is_retriever() and m.is_available(self._rt_obj)]
+        retriever_methods = [m for m in rtorrent.peer.methods
+                             if m.is_retriever() and m.is_available(self._rt_obj)]
         # need to leave 2nd arg empty (dunno why)
         m = rtorrent.rpc.Multicall(self)
         m.add("p.multicall", self.info_hash, "",
-                *[method.rpc_call + "=" for method in retriever_methods])
+              *[method.rpc_call + "=" for method in retriever_methods])
 
-        results = m.call()[0] # only sent one call, only need first result
+        results = m.call()[0]  # only sent one call, only need first result
 
         for result in results:
             results_dict = {}
@@ -80,7 +81,8 @@ class Torrent:
             for m, r in zip(retriever_methods, result):
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            self.peers.append(Peer(self._rt_obj, self.info_hash, **results_dict))
+            self.peers.append(Peer(
+                self._rt_obj, self.info_hash, **results_dict))
 
         return(self.peers)
 
@@ -89,19 +91,19 @@ class Torrent:
 
         @return: L{Tracker} instances
         @rtype: list
-        
+
         @note: also assigns return value to self.trackers
         """
         self.trackers = []
-        retriever_methods = [m for m in rtorrent.tracker.methods \
-                        if m.is_retriever() and m.is_available(self._rt_obj)]
+        retriever_methods = [m for m in rtorrent.tracker.methods
+                             if m.is_retriever() and m.is_available(self._rt_obj)]
 
         # need to leave 2nd arg empty (dunno why)
         m = rtorrent.rpc.Multicall(self)
         m.add("t.multicall", self.info_hash, "",
-                *[method.rpc_call + "=" for method in retriever_methods])
+              *[method.rpc_call + "=" for method in retriever_methods])
 
-        results = m.call()[0] # only sent one call, only need first result
+        results = m.call()[0]  # only sent one call, only need first result
 
         for result in results:
             results_dict = {}
@@ -109,7 +111,8 @@ class Torrent:
             for m, r in zip(retriever_methods, result):
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            self.trackers.append(Tracker(self._rt_obj, self.info_hash, **results_dict))
+            self.trackers.append(Tracker(
+                self._rt_obj, self.info_hash, **results_dict))
 
         return(self.trackers)
 
@@ -123,17 +126,18 @@ class Torrent:
         """
 
         self.files = []
-        retriever_methods = [m for m in rtorrent.file.methods \
-                        if m.is_retriever() and m.is_available(self._rt_obj)]
-        # 2nd arg can be anything, but it'll return all files in torrent regardless
+        retriever_methods = [m for m in rtorrent.file.methods
+                             if m.is_retriever() and m.is_available(self._rt_obj)]
+        # 2nd arg can be anything, but it'll return all files in torrent
+        # regardless
         m = rtorrent.rpc.Multicall(self)
         m.add("f.multicall", self.info_hash, "",
-                *[method.rpc_call + "=" for method in retriever_methods])
+              *[method.rpc_call + "=" for method in retriever_methods])
 
-        results = m.call()[0] # only sent one call, only need first result
+        results = m.call()[0]  # only sent one call, only need first result
 
         offset_method_index = retriever_methods.index(
-                                    rtorrent.rpc.find_method("f.get_offset"))
+            rtorrent.rpc.find_method("f.get_offset"))
 
         # make a list of the offsets of all the files, sort appropriately
         offset_list = sorted([r[offset_method_index] for r in results])
@@ -144,17 +148,18 @@ class Torrent:
             for m, r in zip(retriever_methods, result):
                 results_dict[m.varname] = rtorrent.rpc.process_result(m, r)
 
-            # get proper index positions for each file (based on the file offset)
+            # get proper index positions for each file (based on the file
+            # offset)
             f_index = offset_list.index(results_dict["offset"])
 
-            self.files.append(File(self._rt_obj, self.info_hash, \
+            self.files.append(File(self._rt_obj, self.info_hash,
                                    f_index, **results_dict))
 
         return(self.files)
 
     def set_directory(self, d):
         """Modify download directory
-        
+
         @note: Needs to stop torrent in order to change the directory.
         Also doesn't restart after directory is set, that must be called
         separately.
@@ -192,7 +197,7 @@ class Torrent:
 
     def erase(self):
         """Delete the torrent
-        
+
         @note: doesn't delete the downloaded files"""
         m = rtorrent.rpc.Multicall(self)
         self.multicall_add(m, "d.erase")
@@ -214,14 +219,14 @@ class Torrent:
 
     def update(self):
         """Refresh torrent data
-        
+
         @note: All fields are stored as attributes to self.
 
         @return: None
         """
         multicall = rtorrent.rpc.Multicall(self)
-        retriever_methods = [m for m in methods \
-                        if m.is_retriever() and m.is_available(self._rt_obj)]
+        retriever_methods = [m for m in methods
+                             if m.is_retriever() and m.is_available(self._rt_obj)]
         for method in retriever_methods:
             multicall.add(method, self.rpc_id)
 
@@ -233,11 +238,13 @@ class Torrent:
 
     def accept_seeders(self, accept_seeds):
         """Enable/disable whether the torrent connects to seeders
-        
-        @param accept_seeds: enable/disable accepting seeders 
+
+        @param accept_seeds: enable/disable accepting seeders
         @type accept_seeds: bool"""
-        if accept_seeds: call = "d.accepting_seeders.enable"
-        else: call = "d.accepting_seeders.disable"
+        if accept_seeds:
+            call = "d.accepting_seeders.enable"
+        else:
+            call = "d.accepting_seeders.disable"
 
         m = rtorrent.rpc.Multicall(self)
         self.multicall_add(m, call)
@@ -253,19 +260,19 @@ class Torrent:
 
     ############################################################################
     # CUSTOM METHODS (Not part of the official rTorrent API)
-    ############################################################################
+    ##########################################################################
     def _is_hash_checking_queued(self):
         """Only checks instance variables, shouldn't be called directly"""
         # if hashing == 3, then torrent is marked for hash checking
         # if hash_checking == False, then torrent is waiting to be checked
-        self.hash_checking_queued = (self.hashing == 3 and \
+        self.hash_checking_queued = (self.hashing == 3 and
                                      self.hash_checking == False)
 
         return(self.hash_checking_queued)
 
     def is_hash_checking_queued(self):
         """Check if torrent is waiting to be hash checked
-        
+
         @note: Variable where the result for this method is stored Torrent.hash_checking_queued"""
         m = rtorrent.rpc.Multicall(self)
         self.multicall_add(m, "d.get_hashing")
@@ -284,7 +291,7 @@ class Torrent:
 
     def is_paused(self):
         """Check if torrent is paused
-        
+
         @note: Variable where the result for this method is stored: Torrent.paused"""
         self.get_state()
         return(self._is_paused())
@@ -296,7 +303,7 @@ class Torrent:
 
     def is_started(self):
         """Check if torrent is started
-        
+
         @note: Variable where the result for this method is stored: Torrent.started"""
         self.get_state()
         return(self._is_started())
