@@ -20,13 +20,9 @@
 
 import rtorrent
 import re
-from rtorrent.common import _py3, bool_to_int, convert_version_tuple_to_str
+from rtorrent.common import bool_to_int, convert_version_tuple_to_str
 from rtorrent.err import RTorrentVersionError, MethodError
-
-if _py3:
-    import xmlrpc.client as xmlrpclib  # @UnresolvedImport
-else:
-    import xmlrpclib  # @UnresolvedImport @Reimport
+from rtorrent.compat import xmlrpclib
 
 
 def get_varname(rpc_call):
