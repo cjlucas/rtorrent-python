@@ -112,7 +112,7 @@ class Method:
 
     def is_available(self, rt_obj):
         if rt_obj._get_client_version_tuple() < self.min_version or \
-                self.rpc_call not in rt_obj.get_rpc_methods():
+                self.rpc_call not in rt_obj._get_rpc_methods():
             return(False)
         else:
             return(True)
@@ -162,7 +162,7 @@ class Multicall:
         @return: the results (post-processed), in the order they were added
         @rtype: tuple
         """
-        m = xmlrpclib.MultiCall(self.rt_obj._get_xmlrpc_conn())
+        m = xmlrpclib.MultiCall(self.rt_obj._get_conn())
         for call in self.calls:
             method, args = call
             rpc_call = getattr(method, "rpc_call")

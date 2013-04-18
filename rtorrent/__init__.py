@@ -63,14 +63,14 @@ class RTorrent:
         if verify is True:
             self._verify_conn()
 
-    def _get_xmlrpc_conn(self):
+    def _get_conn(self):
         """Get ServerProxy instance"""
         return self.sp(self.url, **self.sp_kwargs)
 
     def _verify_conn(self):
         # check for rpc methods that should be available
         assert {"system.client_version",
-                "system.library_version"}.issubset(set(self.get_rpc_methods())),\
+                "system.library_version"}.issubset(set(self._get_rpc_methods())),\
             "Required RPC methods not available."
 
         # minimum rTorrent version check
@@ -83,7 +83,7 @@ class RTorrent:
         return self._get_client_version_tuple() >= MIN_RTORRENT_VERSION
 
     def _get_client_version_tuple(self):
-        conn = self._get_xmlrpc_conn()
+        conn = self._get_conn()
 
         if not self._client_version_tuple:
             if not hasattr(self, "client_version"):
@@ -96,7 +96,7 @@ class RTorrent:
 
         return self._client_version_tuple
 
-    def get_rpc_methods(self):
+    def _get_rpc_methods(self):
         """ Get list of raw RPC commands
 
         @return: raw RPC commands
@@ -104,7 +104,7 @@ class RTorrent:
         """
 
         if self._rpc_methods == []:
-            self._rpc_methods = self._get_xmlrpc_conn().system.listMethods()
+            self._rpc_methods = self._get_conn().system.listMethods()
 
         return(self._rpc_methods)
 
@@ -212,7 +212,7 @@ class RTorrent:
         this function doesn't execute instantaneously. If that's what you're
         looking for, use load_torrent_simple() instead.
         """
-        p = self._get_xmlrpc_conn()
+        p = self._get_conn()
         tp = TorrentParser(torrent)
         torrent = xmlrpclib.Binary(tp._raw_torrent)
         info_hash = tp.info_hash
@@ -265,7 +265,7 @@ class RTorrent:
         verification that the torrent was successfully added to rTorrent.
         Use load_torrent() if you would like these features.
         """
-        p = self._get_xmlrpc_conn()
+        p = self._get_conn()
 
         assert file_type in ["raw", "file", "url"], \
             "Invalid file_type, options are: 'url', 'file', 'raw'."
@@ -359,8 +359,8 @@ def _build_class_methods(class_obj):
 
 def __compare_rpc_methods(rt_new, rt_old):
     from pprint import pprint
-    rt_new_methods = set(rt_new.get_rpc_methods())
-    rt_old_methods = set(rt_old.get_rpc_methods())
+    rt_new_methods = set(rt_new._get_rpc_methods())
+    rt_old_methods = set(rt_old._get_rpc_methods())
     print("New Methods:")
     pprint(rt_new_methods - rt_old_methods)
     print("Methods not in new rTorrent:")
@@ -375,7 +375,7 @@ def __check_supported_methods(rt):
                              rtorrent.torrent.methods +
                              rtorrent.tracker.methods +
                              rtorrent.peer.methods])
-    all_methods = set(rt.get_rpc_methods())
+    all_methods = set(rt._get_rpc_methods())
 
     print("Methods NOT in supported methods")
     pprint(all_methods - supported_methods)
