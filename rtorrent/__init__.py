@@ -18,23 +18,15 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from rtorrent.common import _py3, find_torrent, \
+from rtorrent.common import find_torrent, \
     is_valid_port, convert_version_tuple_to_str
 from rtorrent.lib.torrentparser import TorrentParser
+from rtorrent.lib.xmlrpc.http import HTTPServerProxy
 from rtorrent.rpc import Method
 from rtorrent.torrent import Torrent
 import os.path
 import rtorrent.rpc  # @UnresolvedImport
 import time
-
-
-if _py3:
-    import xmlrpc.client as xmlrpclib  # @UnresolvedImport
-    # from urllib.request import urlopen  # @UnresolvedImport
-else:
-    import xmlrpclib  # @UnresolvedImport @Reimport
-    # from urllib2 import urlopen  # @UnresolvedImport @Reimport
-
 
 __version__ = "0.2.9"
 __author__ = "Chris Lucas"
@@ -50,7 +42,7 @@ class RTorrent:
     rpc_prefix = None
 
     def __init__(self, url, verify=False,
-                 sp=xmlrpclib.ServerProxy, sp_kwargs={}):
+                 sp=HTTPServerProxy, sp_kwargs={}):
         self.url = url  # : From X{__init__(self, url)}
         self.sp = sp
         self.sp_kwargs = sp_kwargs

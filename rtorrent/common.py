@@ -18,16 +18,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
-
-_py3 = sys.version_info > (3,)
-
 
 def bool_to_int(value):
     """Translates python booleans to RPC-safe integers"""
-    if value == True:
+    if value is True:
         return("1")
-    elif value == False:
+    elif value is False:
         return("0")
     else:
         return(value)
