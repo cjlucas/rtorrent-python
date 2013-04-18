@@ -18,23 +18,22 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from rtorrent.common import _py3, cmd_exists, find_torrent, \
-    is_valid_port, bool_to_int, convert_version_tuple_to_str
+from rtorrent.common import _py3, find_torrent, \
+    is_valid_port, convert_version_tuple_to_str
 from rtorrent.lib.torrentparser import TorrentParser
 from rtorrent.rpc import Method
 from rtorrent.torrent import Torrent
 import os.path
 import rtorrent.rpc  # @UnresolvedImport
-import sys
 import time
 
 
 if _py3:
     import xmlrpc.client as xmlrpclib  # @UnresolvedImport
-    from urllib.request import urlopen  # @UnresolvedImport
+    # from urllib.request import urlopen  # @UnresolvedImport
 else:
     import xmlrpclib  # @UnresolvedImport @Reimport
-    from urllib2 import urlopen  # @UnresolvedImport @Reimport
+    # from urllib2 import urlopen  # @UnresolvedImport @Reimport
 
 
 __version__ = "0.2.9"
@@ -50,70 +49,70 @@ class RTorrent:
     """ Create a new rTorrent connection """
     rpc_prefix = None
 
-    def __init__(self, url, _verbose=False):
+    def __init__(self, url, verify=False,
+                 sp=xmlrpclib.ServerProxy, sp_kwargs={}):
         self.url = url  # : From X{__init__(self, url)}
-        self._verbose = _verbose
+        self.sp = sp
+        self.sp_kwargs = sp_kwargs
+
         self.torrents = []  # : List of L{Torrent} instances
         self._rpc_methods = []  # : List of rTorrent RPC methods
         self._torrent_cache = []
+        self._client_version_tuple = ()
 
-        assert self._verify_conn(self._get_xmlrpc_conn()) \
-            is True, "rTorrent connection failed"
-
-        self.client_version_tuple = tuple([int(i) for i in
-                                           self._get_xmlrpc_conn().system.client_version().split(".")])
-
-        assert self._meets_version_requirement() is True, \
-            "Error: Minimum rTorrent version required is {0}".format(
-            MIN_RTORRENT_VERSION_STR)
-
-        self.update()
-        self.get_torrents()
+        if verify is True:
+            self._verify_conn()
 
     def _get_xmlrpc_conn(self):
         """Get ServerProxy instance"""
-        return(xmlrpclib.ServerProxy(self.url, verbose=self._verbose))
+        return self.sp(self.url, **self.sp_kwargs)
 
-    def _verify_conn(self, conn):
-        """Verify given ServerProxy connection is to an rTorrent XMLRPC server"""
-        try:
-            self._rpc_methods = conn.system.listMethods()
-        except xmlrpclib.ProtocolError as err:
-            sys.stderr.write("*** Exception caught: ProtocolError\n")
-            sys.stderr.write("URL: {0}\n".format(err.url))
-            sys.stderr.write("Error code: {0}\n".format(err.errcode))
-            sys.stderr.write("Error message: {0}\n".format(err.errmsg))
-            return(False)
-        except xmlrpclib.ResponseError:
-            sys.stderr.write("*** Exception caught: ResponseError")
-            return(False)
+    def _verify_conn(self):
+        # check for rpc methods that should be available
+        assert {"system.client_version",
+                "system.library_version"}.issubset(set(self.get_rpc_methods())),\
+            "Required RPC methods not available."
 
-        # simple check, probably sufficient
-        if "system.client_version" not in self._rpc_methods \
-                or "system.library_version" not in self._rpc_methods:
-            return(False)
-        else:
-            return(True)
+        # minimum rTorrent version check
+
+        assert self._meets_version_requirement() is True,\
+            "Error: Minimum rTorrent version required is {0}".format(
+            MIN_RTORRENT_VERSION_STR)
 
     def _meets_version_requirement(self):
-        """Check if rTorrent version is meets requirements"""
-        if hasattr(self, "client_version_tuple"):
-            return(self.client_version_tuple >= MIN_RTORRENT_VERSION)
-        else:
-            return(False)
+        return self._get_client_version_tuple() >= MIN_RTORRENT_VERSION
+
+    def _get_client_version_tuple(self):
+        conn = self._get_xmlrpc_conn()
+
+        if not self._client_version_tuple:
+            if not hasattr(self, "client_version"):
+                setattr(self, "client_version",
+                        conn.system.client_version())
+
+            rtver = getattr(self, "client_version")
+            self._client_version_tuple = tuple([int(i) for i in
+                                                rtver.split(".")])
+
+        return self._client_version_tuple
 
     def get_rpc_methods(self):
-        """Get list of raw RPC commands supported by rTorrent
+        """ Get list of raw RPC commands
 
         @return: raw RPC commands
         @rtype: list
         """
+
+        if self._rpc_methods == []:
+            self._rpc_methods = self._get_xmlrpc_conn().system.listMethods()
+
         return(self._rpc_methods)
 
     def get_torrents(self, view="main"):
         """Get list of all torrents in specified view
 
         @return: list of L{Torrent} instances
+
         @rtype: list
 
         @todo: add validity check for specified view
@@ -231,12 +230,12 @@ class RTorrent:
                 if info_hash in [t.info_hash for t in self.torrents]:
                     break
 
-                time.sleep(
-                    1)  # was still getting AssertionErrors, delay should help
+                # was still getting AssertionErrors, delay should help
+                time.sleep(1)
                 i += 1
 
-            assert info_hash in [
-                t.info_hash for t in self.torrents], "Adding torrent was unsuccessful."
+            assert info_hash in [t.info_hash for t in self.torrents],\
+                "Adding torrent was unsuccessful."
 
         return(find_torrent(info_hash, self.torrents))
 
