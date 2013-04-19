@@ -21,6 +21,8 @@
 # from rtorrent.rpc import Method
 import rtorrent.rpc
 
+from rtorrent.common import safe_repr
+
 Method = rtorrent.rpc.Method
 
 
@@ -53,7 +55,7 @@ class File:
         multicall.call()
 
     def __repr__(self):
-        return("<File index={0} path=\"{1}\">".format(self.index, self.path))
+        return safe_repr("File(index={0} path=\"{1}\")", self.index, self.path)
 
 methods = [
     # RETRIEVERS

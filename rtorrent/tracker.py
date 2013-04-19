@@ -21,6 +21,8 @@
 # from rtorrent.rpc import Method
 import rtorrent.rpc
 
+from rtorrent.common import safe_repr
+
 Method = rtorrent.rpc.Method
 
 
@@ -39,7 +41,8 @@ class Tracker:
             self.info_hash, self.index)  # : unique id to pass to rTorrent
 
     def __repr__(self):
-        return("<Tracker index={0}, url=\"{1}\">".format(self.index, self.url))
+        return safe_repr("Tracker(index={0}, url=\"{1}\")",
+                        self.index, self.url)
 
     def enable(self):
         """Alias for set_enabled("yes")"""

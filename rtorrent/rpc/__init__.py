@@ -20,7 +20,8 @@
 
 import rtorrent
 import re
-from rtorrent.common import bool_to_int, convert_version_tuple_to_str
+from rtorrent.common import bool_to_int, convert_version_tuple_to_str,\
+    safe_repr
 from rtorrent.err import RTorrentVersionError, MethodError
 from rtorrent.compat import xmlrpclib
 
@@ -84,9 +85,8 @@ class Method:
         assert self.varname is not None, "Couldn't get variable name."
 
     def __repr__(self):
-        return("<Method method_name='{0}', rpc_call='{1}'>".format(
-            self.method_name,
-            self.rpc_call))
+        return safe_repr("Method(method_name='{0}', rpc_call='{1}')",
+                        self.method_name, self.rpc_call)
 
     def _get_method_type(self):
         """Determine whether method is a modifier or a retriever"""

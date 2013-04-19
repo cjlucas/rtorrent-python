@@ -21,6 +21,8 @@
 # from rtorrent.rpc import Method
 import rtorrent.rpc
 
+from rtorrent.common import safe_repr
+
 Method = rtorrent.rpc.Method
 
 
@@ -36,7 +38,7 @@ class Peer:
             self.info_hash, self.id)  # : unique id to pass to rTorrent
 
     def __repr__(self):
-        return("<Peer id={0}>".format(self.id))
+        return safe_repr("Peer(id={0})", self.id)
 
     def update(self):
         """Refresh peer data

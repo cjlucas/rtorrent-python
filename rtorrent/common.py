@@ -19,6 +19,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+from rtorrent.compat import is_py3
+
+
 def bool_to_int(value):
     """Translates python booleans to RPC-safe integers"""
     if value is True:
@@ -69,3 +72,15 @@ def is_valid_port(port):
 
 def convert_version_tuple_to_str(t):
     return(".".join([str(n) for n in t]))
+
+
+def safe_repr(fmt, *args, **kwargs):
+    """ Formatter that handles unicode arguments """
+
+    if not is_py3():
+        # unicode fmt can take str args, str fmt cannot take unicode args
+        fmt = fmt.decode("utf-8")
+        out = fmt.format(*args, **kwargs)
+        return out.encode("utf-8")
+    else:
+        return fmt.format(*args, **kwargs)
