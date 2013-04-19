@@ -60,9 +60,9 @@ def find_torrent(info_hash, torrent_list):
     """
     for t in torrent_list:
         if t.info_hash == info_hash:
-            return(t)
+            return t
 
-    return(-1)
+    return None
 
 
 def is_valid_port(port):

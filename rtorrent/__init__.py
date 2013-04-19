@@ -138,7 +138,7 @@ class RTorrent:
         for torrent in self._torrent_cache:
             new_torrent = rtorrent.common.find_torrent(torrent.info_hash,
                                                        self.torrents)
-            if new_torrent != -1:
+            if new_torrent is not None:
                 new_torrent.files = torrent.files
                 new_torrent.peers = torrent.peers
                 new_torrent.trackers = torrent.trackers
