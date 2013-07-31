@@ -19,6 +19,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from base64 import encodestring
 import httplib
+import inspect
 import string
 
 import rtorrent
@@ -315,6 +316,11 @@ def process_result(method, result):
 
 def _build_rpc_methods(class_, method_list):
     """Build glorified aliases to raw RPC methods"""
+    instance = None
+    if not inspect.isclass(class_):
+        instance = class_
+        class_ = instance.__class__
+
     for m in method_list:
         class_name = m.class_name
         if class_name != class_.__name__:
@@ -337,6 +343,10 @@ def _build_rpc_methods(class_, method_list):
                 call_method(self, method, self.rpc_id,
                             bool_to_int(arg))
 
+        elif class_name == "Group":
+            caller = lambda arg = None, method = m: \
+                call_method(instance, method, bool_to_int(arg))
+
         if m.docstring is None:
             m.docstring = ""
 
@@ -351,4 +361,7 @@ def _build_rpc_methods(class_, method_list):
         caller.__doc__ = docstring
 
         for method_name in [m.method_name] + list(m.aliases):
-            setattr(class_, method_name, caller)
+            if instance is None:
+                setattr(class_, method_name, caller)
+            else:
+                setattr(instance, method_name, caller)
