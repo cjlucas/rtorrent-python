@@ -319,6 +319,14 @@ class Torrent:
 
         return(m.call()[-1])
 
+    def set_visible(self, view, visible=True):
+        p = self._rt_obj._get_conn()
+
+        if visible:
+            return p.view.set_visible(self.info_hash, view)
+        else:
+            return p.view.set_not_visible(self.info_hash, view)
+
     ############################################################################
     # CUSTOM METHODS (Not part of the official rTorrent API)
     ##########################################################################
