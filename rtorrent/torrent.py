@@ -190,6 +190,20 @@ class Torrent:
         self.active = m.call()[-1]
         return(self.active)
 
+    def pause(self):
+        """Pause the torrent"""
+        m = rtorrent.rpc.Multicall(self)
+        self.multicall_add(m, "d.pause")
+
+        return(m.call()[-1])
+
+    def resume(self):
+        """Resume the torrent"""
+        m = rtorrent.rpc.Multicall(self)
+        self.multicall_add(m, "d.resume")
+
+        return(m.call()[-1])
+
     def close(self):
         """Close the torrent and it's files"""
         m = rtorrent.rpc.Multicall(self)

@@ -224,7 +224,9 @@ class Multicall:
             result = process_result(method, r)
             results_processed.append(result)
             # assign result to class_obj
-            setattr(self.class_obj, method.varname, result)
+            exists = hasattr(self.class_obj, method.varname)
+            if not exists or not inspect.ismethod(getattr(self.class_obj, method.varname)):
+                setattr(self.class_obj, method.varname, result)
 
         return(tuple(results_processed))
 
