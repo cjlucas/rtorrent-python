@@ -17,6 +17,10 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+from base64 import encodestring
+import httplib
+import inspect
+import string
 
 import rtorrent
 import re
@@ -24,6 +28,53 @@ from rtorrent.common import bool_to_int, convert_version_tuple_to_str,\
     safe_repr
 from rtorrent.err import RTorrentVersionError, MethodError
 from rtorrent.compat import xmlrpclib
+
+
+class BasicAuthTransport(xmlrpclib.Transport):
+    def __init__(self, username=None, password=None):
+        xmlrpclib.Transport.__init__(self)
+        self.username = username
+        self.password = password
+
+    def send_auth(self, h):
+        if self.username is not None and self.password is not None:
+            h.putheader('AUTHORIZATION', "Basic %s" % string.replace(
+                encodestring("%s:%s" % (self.username, self.password)),
+                "\012", ""
+            ))
+
+    def single_request(self, host, handler, request_body, verbose=0):
+        # issue XML-RPC request
+
+        h = self.make_connection(host)
+        if verbose:
+            h.set_debuglevel(1)
+
+        try:
+            self.send_request(h, handler, request_body)
+            self.send_host(h, host)
+            self.send_user_agent(h)
+            self.send_auth(h)
+            self.send_content(h, request_body)
+
+            response = h.getresponse(buffering=True)
+            if response.status == 200:
+                self.verbose = verbose
+                return self.parse_response(response)
+        except xmlrpclib.Fault:
+            raise
+        except Exception:
+            self.close()
+            raise
+
+        #discard any response data and raise exception
+        if (response.getheader("content-length", 0)):
+            response.read()
+        raise xmlrpclib.ProtocolError(
+            host + handler,
+            response.status, response.reason,
+            response.msg,
+        )
 
 
 def get_varname(rpc_call):
@@ -173,7 +224,9 @@ class Multicall:
             result = process_result(method, r)
             results_processed.append(result)
             # assign result to class_obj
-            setattr(self.class_obj, method.varname, result)
+            exists = hasattr(self.class_obj, method.varname)
+            if not exists or not inspect.ismethod(getattr(self.class_obj, method.varname)):
+                setattr(self.class_obj, method.varname, result)
 
         return(tuple(results_processed))
 
@@ -265,6 +318,11 @@ def process_result(method, result):
 
 def _build_rpc_methods(class_, method_list):
     """Build glorified aliases to raw RPC methods"""
+    instance = None
+    if not inspect.isclass(class_):
+        instance = class_
+        class_ = instance.__class__
+
     for m in method_list:
         class_name = m.class_name
         if class_name != class_.__name__:
@@ -287,6 +345,10 @@ def _build_rpc_methods(class_, method_list):
                 call_method(self, method, self.rpc_id,
                             bool_to_int(arg))
 
+        elif class_name == "Group":
+            caller = lambda arg = None, method = m: \
+                call_method(instance, method, bool_to_int(arg))
+
         if m.docstring is None:
             m.docstring = ""
 
@@ -301,4 +363,7 @@ def _build_rpc_methods(class_, method_list):
         caller.__doc__ = docstring
 
         for method_name in [m.method_name] + list(m.aliases):
-            setattr(class_, method_name, caller)
+            if instance is None:
+                setattr(class_, method_name, caller)
+            else:
+                setattr(instance, method_name, caller)

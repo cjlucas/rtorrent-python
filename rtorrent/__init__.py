@@ -22,11 +22,13 @@ from rtorrent.common import find_torrent, \
     is_valid_port, convert_version_tuple_to_str
 from rtorrent.lib.torrentparser import TorrentParser
 from rtorrent.lib.xmlrpc.http import HTTPServerProxy
-from rtorrent.rpc import Method
+from rtorrent.rpc import Method, BasicAuthTransport
 from rtorrent.torrent import Torrent
+from rtorrent.group import Group
 import os.path
 import rtorrent.rpc  # @UnresolvedImport
 import time
+import xmlrpclib
 
 __version__ = "0.2.9"
 __author__ = "Chris Lucas"
@@ -41,9 +43,11 @@ class RTorrent:
     """ Create a new rTorrent connection """
     rpc_prefix = None
 
-    def __init__(self, url, verify=False,
-                 sp=HTTPServerProxy, sp_kwargs={}):
+    def __init__(self, url, username=None, password=None,
+                 verify=False, sp=HTTPServerProxy, sp_kwargs={}):
         self.url = url  # : From X{__init__(self, url)}
+        self.username = username
+        self.password = password
         self.sp = sp
         self.sp_kwargs = sp_kwargs
 
@@ -57,6 +61,12 @@ class RTorrent:
 
     def _get_conn(self):
         """Get ServerProxy instance"""
+        if self.username is not None and self.password is not None:
+            return self.sp(
+                self.url,
+                transport=BasicAuthTransport(self.username, self.password),
+                **self.sp_kwargs
+            )
         return self.sp(self.url, **self.sp_kwargs)
 
     def _verify_conn(self):
@@ -276,6 +286,26 @@ class RTorrent:
             finput = torrent
 
         getattr(p, func_name)(finput)
+
+    def get_views(self):
+        p = self._get_conn()
+        return p.view_list()
+
+    def create_group(self, name, persistent=True, view=None):
+        p = self._get_conn()
+
+        if persistent is True:
+            p.group.insert_persistent_view('', name)
+        else:
+            assert view is not None, "view parameter required on non-persistent groups"
+            p.group.insert('', name, view)
+
+    def get_group(self, name):
+        assert name is not None, "group name required"
+
+        group = Group(self, name)
+        group.update()
+        return group
 
     def set_dht_port(self, port):
         """Set DHT port
