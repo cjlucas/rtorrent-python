@@ -22,7 +22,7 @@ from rtorrent.common import find_torrent, \
     is_valid_port, convert_version_tuple_to_str
 from rtorrent.lib.torrentparser import TorrentParser
 from rtorrent.lib.xmlrpc.http import HTTPServerProxy
-from rtorrent.rpc import Method, BasicAuthTransport
+from rtorrent.lib.xmlrpc.basic_auth import BasicAuthTransport
 from rtorrent.torrent import Torrent
 from rtorrent.group import Group
 import os.path
