@@ -1,17 +1,52 @@
+v0.3.0 (not yet released)
+-------------------------
+- added: support for torrent custom fields
+- added: support for ServerProxy subclasses
+- added: SCGIServerProxy subclass (thanks fuzeman)
+- fixed: unicode issues related to repr
+
+- rTorrent.RTorrent
+  - changed: __init__()
+	- added: sp and sp_kwargs args
+    - removed: _verbose arg (specify in sp_kwargs instead)
+	- changed: no longer calls update() and get_torrents()
+  - renamed: get_rpc_methods() to _get_rpc_methods()
+  - renamed: _get_xmlrpc_conn() to _get_conn()
+  - changed: find_torrent() now returns None if torrent not found
+  - added: verify_retries parameter to RTorrent.load_torrent()
+
+- rtorrent.Torrent
+  - added: set_custom()
+  - added: set_custom1()
+  - added: set_custom2()
+  - added: set_custom3()
+  - added: set_custom4()
+  - added: set_custom5()
+  - added: get_custom()
+  - added: get_custom1()
+  - added: get_custom2()
+  - added: get_custom3()
+  - added: get_custom4()
+  - added: get_custom5()
+  - added: set_directory_base()
+
+- rtorrent.common
+  - find_torrent() now returns None if torrent not found
+
 v0.2.9 (April 10, 2012)
 -----------------------
 - General
-  - improvement: rtorrent-python now creates a new http connection with every 
-    Multicall instance, this was to fix issues caused by calls being made 
+  - improvement: rtorrent-python now creates a new http connection with every
+    Multicall instance, this was to fix issues caused by calls being made
     simultaneously using the same RTorrent instance
-    
+
   - fixed: an issue which prevented rtorrent.RTorrent rpc methods from
-    being built (bug introduced in v0.2.8) 
-  
+    being built (bug introduced in v0.2.8)
+
 - rtorrent.RTorrent
   - removed: all instances of RTorrent.download_list
     (replaced with [t.info_hash for t in RTorrent.torrents])
-  
+
 v0.2.8 (April 6, 2012)
 ----------------------
 - General
@@ -19,13 +54,13 @@ v0.2.8 (April 6, 2012)
     created if the version of rTorrent being connected to didn't support them.
     Now, all instance methods calls will be created, but ones that aren't
     supported by the connected rTorrent client will throw a MethodError when called.
-    
+
     This also goes for methods being added to a Multicall instance via Multicall.add()
 
 - rtorrent.RTorrent
   - get_api_version()
   - get_system_time()
-    
+
 - rtorrent.torrent.Torrent
   - added: announce()
   - added: accept_seeders()
@@ -36,7 +71,7 @@ v0.2.8 (April 6, 2012)
   - added: get_time_started()
   - added: get_num_chunks_wanted()
   - renamed: get_chunks_hashed() to get_num_chunks_hashed()
-    
+
 - rtorrent.tracker.Tracker
   - added: get_activity_time_last()
   - added: get_activity_time_next()
@@ -53,21 +88,21 @@ v0.2.8 (April 6, 2012)
   - added: is_extra_tracker()
   - added: get_latest_sum_peers()
   - added: get_latest_new_peers()
-  
+
 - rtorrent.file.File
   - added: update()
-    
+
 - rtorrent.rpc.Method
-  - added support for aliases so there can be some backwards 
+  - added support for aliases so there can be some backwards
     compatibility if methods are renamed
-      
+
 - rtorrent.rpc.Multicall
   - Multicall now sets the results of the call to the instance object given (Issue #7)
   - Because Multicall.call() now assigns the result of a method call to the
-    calling, Multicall now needs the calling object as an input instead of 
+    calling, Multicall now needs the calling object as an input instead of
     just the instance of RTorrent
-    
-    
+
+
 v0.2.7 (March 1, 2012)
 ----------------------
 - fixed: RTorrent instances are no longer created if the connection to the XMLRPC server fails
@@ -100,7 +135,7 @@ v0.2.5 (February 05, 2012)
   - rtorrent.rpc.Method
     - added: post_process_func - specify a custom post processing method (Issue #4)
              (look for get_ratio Method in rtorrent.torrent for an example)
-    
+
 
 v0.2.4 (January 01, 2012)
 -------------------------
@@ -115,38 +150,38 @@ v0.2.3 (December 31, 2011)
 
 - API CHANGES
   - General
-    - RTorrent/Peer/Tracker/File/Torrent/Multicall now requires the actual 
-      instance of RTorrent as and input instead of the XMLRPC 
+    - RTorrent/Peer/Tracker/File/Torrent/Multicall now requires the actual
+      instance of RTorrent as and input instead of the XMLRPC
       connection for that instance
-    
+
     - instance methods that communicate with rTorrent will raise
       an exception if the said method is not supported by the version of
       rTorrent you're connected to:
       - will raise rtorrent.err.RTorrentVersionError if the method is newer
         than the rTorrent client
       - will raise MethodError if method isn't listed in RTorrent._rpc_methods
-      
+
     - Methods for RTorrent/Peer/Torrent/etc instances will now be created
       dynamically based on the client version of rTorrent that it's connected
       to (as opposed to the old way, which deleted the original Method instance,
-      and therefore was inaccessible to any future connection to rTorrent, even if 
-      the rTorrent client supported said method. This will ensure that methods 
-      aren't available if the client doesn't support it). You can use hasattr() 
+      and therefore was inaccessible to any future connection to rTorrent, even if
+      the rTorrent client supported said method. This will ensure that methods
+      aren't available if the client doesn't support it). You can use hasattr()
       in order to avoid AttributeError being raised.
-      
+
   - rtorrent.RTorrent
     - renamed: get_commands to get_rpc_methods
 
   - rtorrent.rpc.Method
-    - added: is_available(). This function will check if the Method instance is 
+    - added: is_available(). This function will check if the Method instance is
              supported by the instance of RTorrent specified
     - renamed: class_name to _class
     - added: class_name, which is now just the name of the class, (_class.__name__)
-  
+
   - rtorrent.peer.Peer
     - renamed: banned to is_banned; added support for boolean
     - renamed: client_version to get_client_version
-  
+
   - rtorrent.torrent.Torrent
     - renamed: incomplete to is_incomplete; added support for boolean
 
