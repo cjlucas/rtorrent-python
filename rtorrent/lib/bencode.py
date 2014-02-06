@@ -269,6 +269,8 @@ def encode(data):
         return False
     elif isinstance(data, int):
         return _encode_int(data)
+    elif isinstance(data, long):
+        return _encode_int(data)
     elif isinstance(data, bytes):
         return _encode_string(data)
     elif isinstance(data, _VALID_STRING_TYPES):
