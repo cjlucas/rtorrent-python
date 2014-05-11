@@ -17,10 +17,16 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import urllib
+try:
+    import urllib.parse as urlparser
+except ImportError:
+    import urllib as urlparser
 import os.path
 import time
-import xmlrpclib
+try:
+    import xmlrpc.client as xmlrpclib
+except ImportError:
+    import xmlrpclib
 
 from rtorrent.common import find_torrent, \
     is_valid_port, convert_version_tuple_to_str
@@ -53,7 +59,7 @@ class RTorrent:
         self.username = username
         self.password = password
 
-        self.schema = urllib.splittype(uri)[0]
+        self.schema = urlparser.splittype(uri)[0]
 
         if sp:
             self.sp = sp
