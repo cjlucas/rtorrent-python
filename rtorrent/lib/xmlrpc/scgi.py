@@ -118,8 +118,8 @@ class SCGITransport(xmlrpclib.Transport):
 
     def single_request(self, host, handler, request_body, verbose=0):
         # Add SCGI headers to the request.
-        headers = {'CONTENT_LENGTH': str(len(request_body)), 'SCGI': '1'}
-        header = '\x00'.join(('%s\x00%s' % item for item in headers.items())) + '\x00'
+        headers = [('CONTENT_LENGTH', str(len(request_body))), ('SCGI', '1')]
+        header = '\x00'.join(['%s\x00%s' % (key, value) for key, value in headers]) + '\x00'
         header = '%d:%s' % (len(header), header)
         request_body = '%s,%s' % (header, request_body)
 
