@@ -76,7 +76,7 @@ class Tracker:
 
         @return: if successful, 0
         @rtype: int
-        """"
+        """
         m = rtorrent.rpc.Multicall(self)
         self.multicall_add(m, "d.tracker.insert", self.index, tracker)
 
