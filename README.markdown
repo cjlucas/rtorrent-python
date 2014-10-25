@@ -2,37 +2,25 @@ ABOUT THIS PROJECT
 ------------------
 The xmlrpc interface to rTorrent is extremely unintuitive and has very little documentation, this project aims to make interfacing with rTorrent much easier.
 
-NOTE: This project is considered beta, so expect the API to change. API changes will be noted in the changelog.
+ABOUT 1.0
+-----------
+After years of stagnation, I've decided to do a full rewrite of this project.
+I wasn't happy with the user facing API, and value caching was essentially broken.
 
-REQUIREMENTS
-------------
-- [Python](http://www.python.org/) 2.6 or higher, 3.0 or higher (might work on older versions, but these are the only ones I'm supporting).
-- [rTorrent](http://libtorrent.rakshasa.no/) 0.8.1 or later, with xmlrpc-c support (see [this guide](http://libtorrent.rakshasa.no/wiki/RTorrentXMLRPCGuide)).
-- [xmlrpc-c](http://xmlrpc-c.sourceforge.net/) 1.00 or later. 1.07 or later for 64bit integer support (highly recommended, download either the stable or advanced branches).
-- [Apache](http://www.apache.org/) or [lighttpd](http://www.lighttpd.net/)
-
-INSTALLATION
-------------
-
-If you're downloading the source:
-
-```$ python setup.py install```
-
-Or you can install directly from PyPI:
-
-```$ pip install rtorrent-python```
-
-ROADMAP
--------
-- v0.3.0
-  - Add option for fast RTorrent init (skip paranoid check)
-
-- unknown
-  - Logging support
-  - Documentation and examples
-  - Add support for views
-
-CREDITS
--------
-
-[fuzeman](https://github.com/fuzeman)
+My primary goals for this release:
+  - An API for any user
+    - Simple APIs for scripting
+    - Flexible APIs for fine-grained calls
+  - Separation of live and cached data:
+    - Previously, any call that returned data stored that data as an instance variable
+      within the object. This feature was essentially broken and will be
+      replaced with a better solution.
+  - Cleaner code
+  - Better documentation
+  
+CONTRIBUTIONS
+-------------
+I don't expect to release the final version of 1.0 for awhile, and
+I'm welcome to suggestions during this alpha period. If there is
+anything that frustrated you previously or improvements you wish could be added,
+feel free to create an issue for it.
