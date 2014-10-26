@@ -4,6 +4,6 @@ python:
     - "3.4"
 
 install:
-    - pip install .
+    - sudo pip install .
 
 script: nosetests
