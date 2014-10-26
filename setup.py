@@ -1,10 +1,7 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = __import__('rtorrent').__version__
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+# version = __import__('rtorrent').__version__
 
 required_pkgs = []
 
@@ -21,14 +18,13 @@ classifiers = [
 
 setup(
     name="rtorrent-python",
-    version=version,
+    version='1.0.0-alpha',
     url='https://github.com/cjlucas/rtorrent-python',
     author='Chris Lucas',
     author_email='chris@chrisjlucas.com',
     maintainer='Chris Lucas',
     maintainer_email='chris@chrisjlucas.com',
     description='A simple rTorrent interface written in Python',
-    long_description=read("README.md"),
     keywords="rtorrent p2p",
     license="MIT",
     packages=find_packages(),

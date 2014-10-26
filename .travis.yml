@@ -1,0 +1,9 @@
+python:
+    - "3.2"
+    - "3.3"
+    - "3.4"
+
+install:
+    - pip install .
+
+script: nosetests
