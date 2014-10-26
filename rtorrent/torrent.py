@@ -2,6 +2,8 @@ from rtorrent.rpc.object import RPCObject
 from rtorrent.rpc.method import check_success
 from rtorrent.rpc.caller import RPCCaller
 
+from rtorrent.rpc.processors import *
+
 class Torrent(RPCObject):
     def __init__(self, context, info_hash):
         super().__init__(context)
@@ -75,13 +77,15 @@ class TorrentMetadata(object):
         return lambda: self.results[item]
 
 
+_VALID_TORRENT_PRIORITIES = ['off', 'low', 'normal', 'high']
+
 Torrent.register_rpc_method('get_info_hash', 'd.get_hash')
 Torrent.register_rpc_method("set_priority", "d.set_priority",
-                            pre_processors=[lambda info_hash, x: [info_hash, \
-                                ["off", "low", "normal", "high"].index(x)]],
+                            pre_processors=[valmap(_VALID_TORRENT_PRIORITIES,
+                                                   range(0, 4), 1)],
                             post_processors=[check_success])
-
 Torrent.register_rpc_method("get_priority", "d.get_priority",
-                            post_processors=[lambda x: ["off", "low", "normal", "high"][x]])
-
-Torrent.register_rpc_method("is_accepting_seeders", "d.accepting_seeders", boolean=True)
+                            post_processors=[lambda x:
+                                             _VALID_TORRENT_PRIORITIES[x]])
+Torrent.register_rpc_method("is_accepting_seeders", "d.accepting_seeders",
+                            boolean=True)
