@@ -1,6 +1,7 @@
-from rtorrent.rpc.object import RPCObject
+from rtorrent.rpc import RPCObject
 from rtorrent.rpc.method import check_success
 from rtorrent.rpc.caller import RPCCaller
+from rtorrent.rpc import BaseMulticallBuilder
 
 from rtorrent.rpc.processors import *
 
@@ -19,54 +20,14 @@ class Torrent(RPCObject):
         return "Torrent(info_hash={0})".format(self.info_hash)
 
 
-class TorrentMulticallBuilder(object):
+class TorrentMulticallBuilder(BaseMulticallBuilder):
     def __init__(self, context):
-        self.keys = ['get_info_hash']
-        self.context = context
-        self.available_methods = self.context.get_available_rpc_methods()
-
-    def call(self):
-        caller = RPCCaller(self.context)
-
-        rpc_methods = list(map(lambda x: Torrent.get_rpc_methods()[x], self.keys))
-        mapper = lambda x:\
-            x.get_available_method_name(self.available_methods) + '='
-        args = list(map(mapper, rpc_methods))
-        args.insert(0, 'main')
-        results = caller.add('d.multicall', *args).call()[0]
-
-        torrents = []
-        for res in results:
-            metadata = {}
-            for i,r in enumerate(res):
-                for processor in rpc_methods[i].get_post_processors():
-                    r = processor(r)
-
-                metadata[self.keys[i]] = r
-
-            torrents.append(TorrentMetadata(metadata))
-
-        return torrents
-
-    def __getattr__(self, item):
-        self._assert_valid_rpc_method(item)
-        def inner():
-            self._add_rpc_method(item)
-            return self
-
-        return inner
-
-    def _assert_valid_rpc_method(self, key):
-        method = Torrent.get_rpc_methods().get(key)
-        if method is None:
-            raise RuntimeError("No method with key '{0}' found.".format(key))
-        if not method.is_available(self.available_methods):
-            raise RuntimeError("Method with key '{0}' is unavailable".format(key))
-        if not method.is_retriever():
-            raise RuntimeError("Modifier method with key '{0}' is not allowed".format(key))
-
-    def _add_rpc_method(self, key):
-        self.keys.append(key)
+        super().__init__(context)
+        self.keys.insert(0, 'get_info_hash')
+        self.args.insert(0, ['main'])
+        self.multicall_rpc_method = 'd.multicall'
+        self.rpc_object_class = Torrent
+        self.metadata_cls = TorrentMetadata
 
 
 class TorrentMetadata(object):

@@ -1,6 +1,6 @@
 import xmlrpc.client
 
-from rtorrent.rpc.object import RPCObject
+from rtorrent.rpc import RPCObject
 from rtorrent.context import RTContext
 from rtorrent.rpc.caller import RPCCaller
 
