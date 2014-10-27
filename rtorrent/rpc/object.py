@@ -10,6 +10,9 @@ class RPCObject(object):
     def register_rpc_method(cls, key, rpc_methods, *args, **kwargs):
         cls._rpc_methods[key] = RPCMethod(rpc_methods, *args, **kwargs)
 
+        single_rpc_call = lambda self, *args: self.exec_rpc_call(key, *args)
+        setattr(cls, key, single_rpc_call)
+
     @classmethod
     def get_rpc_methods(cls) -> dict:
         return dict(cls._rpc_methods)
@@ -18,16 +21,13 @@ class RPCObject(object):
         self.context = context
 
     def rpc_call(self, key, *args) -> RPCCall:
-        print("RPCObject.rpc_call()")
         rpc_method = self._get_rpc_method(key)
-        print(rpc_method.get_post_processors())
-
         return RPCCall(rpc_method, *args)
 
     def exec_rpc_call(self, key, *args):
         return RPCCaller(self.context)\
             .add(self.rpc_call(key, *args))\
-            .call()
+            .call()[0]
 
     def _get_rpc_method(self, key) -> RPCMethod:
         # TODO: raise a better exception than KeyError
