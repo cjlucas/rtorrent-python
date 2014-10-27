@@ -11,22 +11,22 @@ class RPCCaller(object):
         self.calls = []
         self.available_methods = None
 
-    def add(self, method, *args):
-        print(method)
-        print(args)
-        if isinstance(method, RPCMethod):
-            call = RPCCall(method, *args)
-        elif isinstance(method, str):
-            call = RPCCall(RPCMethod(method), *args)
-        if hasattr(method, '__self__'):
-            call = method.__self__.rpc_call(method.__name__, *args)
+    def add(self, *args):
+        if isinstance(args[0], RPCCall):
+            call = args[0]
+        elif isinstance(args[0], RPCMethod):
+            call = RPCCall(args[0], *args[1:])
+        elif isinstance(args[0], str):
+            call = RPCCall(RPCMethod(args[0]), *args[1:])
+        elif hasattr(args[0], '__self__'):
+            call = args[0].__self__.rpc_call(args[0].__name__, *args[1:])
+        else:
+            raise RuntimeError("Unexpected args[0]: {0}".format(args[0]))
 
         self.calls.append(call)
         return self
 
     def call(self):
-        available_methods = self.context.get_available_rpc_methods()
-
         multi_call = xmlrpc.client.MultiCall(self.context.get_conn())
         for rpc_call in self.calls:
             method_name = self._get_method_name(rpc_call.get_method())
