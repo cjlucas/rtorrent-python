@@ -22,14 +22,5 @@ class RTorrent(RPCObject, RTContext):
         return self.available_rpc_methods
 
     def get_torrents(self, view=None) -> [Torrent]:
-        # TODO: accept View or str as argument,
-        # create View object if str is given
-        if view is None:
-            view = 'main'
-
-        results = self.multicall()\
-            .add('d.multicall', view, 'd.get_hash=')\
-            .call()
-
-        return [Torrent(self, x[0]) for x in results[0]]
-
+        metadata_list =  TorrentMulticallBuilder(self, view).get_info_hash().call()
+        return [Torrent(self, x.get_info_hash()) for x in metadata_list]

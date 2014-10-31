@@ -2,6 +2,7 @@ from rtorrent.rpc import RPCObject
 from rtorrent.rpc.method import check_success
 from rtorrent.rpc.caller import RPCCaller
 from rtorrent.rpc import BaseMulticallBuilder
+import rtorrent.file
 
 from rtorrent.rpc.processors import *
 
@@ -16,15 +17,20 @@ class Torrent(RPCObject):
         call.get_args().insert(0, self.info_hash)
         return call
 
+    def get_file_metadata(self):
+        return rtorrent.file.FileMulticallBuilder(self).call()
+
     def __str__(self):
         return "Torrent(info_hash={0})".format(self.info_hash)
 
 
 class TorrentMulticallBuilder(BaseMulticallBuilder):
-    def __init__(self, context):
+    def __init__(self, context, view):
         super().__init__(context)
+        if view is None:
+            view = 'main'
         self.keys.insert(0, 'get_info_hash')
-        self.args.insert(0, ['main'])
+        self.args.insert(0, [view])
         self.multicall_rpc_method = 'd.multicall'
         self.rpc_object_class = Torrent
         self.metadata_cls = TorrentMetadata
