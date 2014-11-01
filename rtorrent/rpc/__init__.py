@@ -8,14 +8,17 @@ class RPCObject(object):
 
     @classmethod
     def register_rpc_method(cls, key, rpc_methods, *args, **kwargs):
-        cls._rpc_methods[key] = RPCMethod(rpc_methods, *args, **kwargs)
+        if cls not in cls._rpc_methods:
+            cls._rpc_methods[cls] = {}
+
+        cls._rpc_methods[cls][key] = RPCMethod(rpc_methods, *args, **kwargs)
 
         single_rpc_call = lambda self, *args: self.exec_rpc_call(key, *args)
         setattr(cls, key, single_rpc_call)
 
     @classmethod
     def get_rpc_methods(cls) -> dict:
-        return dict(cls._rpc_methods)
+        return dict(cls._rpc_methods[cls])
 
     def __init__(self, context):
         self.context = context
@@ -31,7 +34,7 @@ class RPCObject(object):
 
     def _get_rpc_method(self, key) -> RPCMethod:
         # TODO: raise a better exception than KeyError
-        rpc_method = self._rpc_methods[key]
+        rpc_method = self._rpc_methods[type(self)][key]
         return rpc_method
 
 class BaseMulticallBuilder(object):
