@@ -30,7 +30,8 @@ class FileMetadata(object):
 
 _VALID_FILE_PRIORITiES = ['off', 'normal', 'high']
 
-File.register_rpc_method('get_size', 'f.get_size_bytes')
+File.register_rpc_method('get_size_bytes', 'f.get_size_bytes')
+File.register_rpc_method('get_size_chunks', 'f.get_size_chunks')
 File.register_rpc_method('get_path', 'f.get_path')
 File.register_rpc_method('get_priority', 'f.get_priority',
                          post_processors=[lambda x:
@@ -39,3 +40,14 @@ File.register_rpc_method('set_priority', 'f.set_priority',
                          pre_processors=[valmap(_VALID_FILE_PRIORITiES,
                                                 range(0, 3), 1)],
                          post_processors=[check_success])
+File.register_rpc_method('get_completed_chunks', 'f.completed_chunks')
+File.register_rpc_method('get_frozen_path', 'f.frozen_path')
+File.register_rpc_method('get_last_touched', 'f.get_last_touched',
+                         post_processors=[to_datetime])
+File.register_rpc_method('get_offset', 'f.get_offset')
+File.register_rpc_method('get_path_components', 'f.get_path_components')
+File.register_rpc_method('get_path_depth', 'f.get_path_depth')
+File.register_rpc_method('get_range_first', 'f.get_range_first')
+File.register_rpc_method('get_range_second', 'f.get_range_second')
+File.register_rpc_method('is_created_queued', 'f.is_created_queued',
+                         bool=True)

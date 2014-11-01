@@ -1,4 +1,6 @@
+import datetime
 import unittest
+
 from nose.tools import *
 
 from rtorrent.file import File
@@ -35,9 +37,6 @@ class TestGetPriority(unittest.TestCase):
     def setUp(self):
         self.call = f.rpc_call('get_priority')
 
-    def test_pre_processing(self):
-        self.call.do_pre_processing()
-        eq_(self.call.get_args(), [f.rpc_id])
 
     def test_post_processing1(self):
         result = self.call.do_post_processing(0)
@@ -51,4 +50,14 @@ class TestGetPriority(unittest.TestCase):
         result = self.call.do_post_processing(2)
         eq_(result, 'high')
 
+class TestGetLastTouched(unittest.TestCase):
+    def setUp(self):
+        self.call = f.rpc_call('get_last_touched')
 
+    def test_pre_processing(self):
+        self.call.do_pre_processing()
+        eq_(self.call.get_args(), [f.rpc_id])
+
+    def test_post_processing(self):
+        result = self.call.do_post_processing(1414776586757462)
+        eq_(result, datetime.datetime(2014, 10, 31, 10, 29, 46, 757462))
