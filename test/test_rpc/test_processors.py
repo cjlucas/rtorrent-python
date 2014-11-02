@@ -42,5 +42,5 @@ def test_to_datetime():
     input = 1414776586757462
     expected = datetime.datetime(2014, 10, 31, 10, 29, 46, 757462)
     delta = to_datetime(input) - expected
-
+    print(delta)
     assert abs(delta) < datetime.timedelta(microseconds=10)
