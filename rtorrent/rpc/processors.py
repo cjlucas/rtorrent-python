@@ -31,10 +31,14 @@ def check_success(arg):
     return arg == 0
 
 def to_datetime(arg):
-    # RTorrent timestamps are in microseconds
+    if arg <= 0:
+        return None
+
+    # RTorrent timestamps are in microseconds, we need them it in seconds
+    arg /= 1.0E6
 
     # RTorrent timestamps are converted to UTC
     # utcfromtimestamp will return a generic datetime object
     # without a timezone associated with it
-    return datetime.datetime.utcfromtimestamp(arg / 1.E6) \
+    return datetime.datetime.utcfromtimestamp(arg) \
         .replace(tzinfo=datetime.timezone.utc)

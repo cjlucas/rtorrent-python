@@ -38,9 +38,11 @@ def test_check_success():
     eq_(check_success(0), True)
     eq_(check_success(-1), False)
 
-def test_to_datetime():
+def test_to_datetime1():
     input_ = 1414963929334259
     expected = datetime.datetime(2014, 11, 2, 21, 32, 9, 334259,
                                  tzinfo=datetime.timezone.utc)
     eq_(to_datetime(input_), expected)
 
+def test_to_datetime2():
+    eq_(to_datetime(0), None)
