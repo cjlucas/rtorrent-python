@@ -2,7 +2,6 @@ from rtorrent.rpc.processors import *
 
 from nose.tools import *
 
-
 def test_valmap1():
     mapper = valmap([0, 1, 2, 3], ['off', 'low', 'normal', 'high'])
     eq_(mapper(1), ['low'])
@@ -41,5 +40,7 @@ def test_check_success():
 
 def test_to_datetime():
     input = 1414776586757462
-    expected = datetime(2014, 10, 31, 10, 29, 46, 757462)
-    eq_(to_datetime(input), expected)
+    expected = datetime.datetime(2014, 10, 31, 10, 29, 46, 757462)
+    delta = to_datetime(input) - expected
+
+    assert abs(delta) < datetime.timedelta(microseconds=10)

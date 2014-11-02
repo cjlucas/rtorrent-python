@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 def valmap(from_list, to_list, index=0):
     assert len(from_list) == len(to_list)
@@ -33,4 +33,4 @@ def check_success(arg):
 def to_datetime(arg):
     # RTorrent timestamps are in microseconds
     arg /= 1.0E6
-    return datetime.fromtimestamp(arg)
+    return datetime.datetime.fromtimestamp(arg)
