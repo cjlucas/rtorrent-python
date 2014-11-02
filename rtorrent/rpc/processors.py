@@ -32,5 +32,8 @@ def check_success(arg):
 
 def to_datetime(arg):
     # RTorrent timestamps are in microseconds
-    arg /= 1.0E6
-    return datetime.datetime.fromtimestamp(arg)
+
+    # RTorrent timestamps are converted to UTC
+    # utcfromtimestamp will return a generic datetime object
+    # without a timezone associated with it
+    return datetime.datetime.utcfromtimestamp(arg / 1.E6)
