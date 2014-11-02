@@ -31,6 +31,7 @@ def check_success(arg):
     return arg == 0
 
 def to_datetime(arg):
+    # Return None if RTorrent returns a timestamp of zero
     if arg <= 0:
         return None
 
