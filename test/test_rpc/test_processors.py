@@ -39,6 +39,16 @@ def test_check_success():
     eq_(check_success(-1), False)
 
 def test_to_datetime():
-    input = 1414776586757462
+    input_ = 1414776586757462
     expected = datetime.datetime(2014, 10, 31, 10, 29, 46, 757462)
-    eq_(to_datetime(input), expected)
+    actual = to_datetime(input_)
+
+    # Compare individual components to avoid the local time
+    # conversion performed by datetime.fromtimestamp
+    eq_(actual.year, expected.year)
+    eq_(actual.month, expected.month)
+    eq_(actual.day, expected.day)
+    eq_(actual.hour, expected.hour)
+    eq_(actual.minute, expected.minute)
+    eq_(actual.second, expected.second)
+    eq_(actual.microsecond, expected.microsecond)

@@ -33,6 +33,4 @@ def check_success(arg):
 def to_datetime(arg):
     # RTorrent timestamps are in microseconds
     arg /= 1.0E6
-    t = datetime.datetime.utcfromtimestamp(arg)
-    return datetime.datetime(t.year, t.month, t.day, t.hour,
-                             t.minute, t.second, t.microsecond)
+    return datetime.datetime.fromtimestamp(arg)
