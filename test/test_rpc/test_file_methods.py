@@ -61,3 +61,10 @@ class TestGetLastTouched(unittest.TestCase):
     def test_post_processing(self):
         result = self.call.do_post_processing(1414776586757462)
         eq_(result, datetime.datetime(2014, 10, 31, 10, 29, 46, 757462))
+
+class TestIsOpen(unittest.TestCase):
+    def setUp(self):
+        self.call = f.rpc_call('is_open')
+
+    def test_post_processing(self):
+        eq_(self.call.do_post_processing(0), False)

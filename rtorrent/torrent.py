@@ -18,11 +18,13 @@ class Torrent(RPCObject):
         return call
 
     def get_file_metadata(self):
-        return rtorrent.file.FileMulticallBuilder(self.context, self) \
-            .get_size() \
-            .get_priority() \
-            .get_path() \
-            .call()
+        builder = rtorrent.file.FileMulticallBuilder(self.context, self)
+
+        for key, rpc_method in rtorrent.file.File.get_rpc_methods().items():
+            if rpc_method.is_retriever():
+                getattr(builder, key)()
+
+        return builder.call()
 
     def __str__(self):
         return "Torrent(info_hash={0})".format(self.info_hash)
