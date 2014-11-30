@@ -1,6 +1,6 @@
 from rtorrent.rpc.call import RPCCall
 from rtorrent.rpc.result import RPCResult
-from rtorrent.rpc.method import RPCMethod
+from rtorrent.rpc.method import RPCMethod, PsuedoRPCMethod
 
 
 import xmlrpc.client
@@ -23,7 +23,8 @@ class RPCCaller(object):
         else:
             raise RuntimeError("Unexpected args[0]: {0}".format(args[0]))
 
-        self.calls.append(call)
+        if call is not None:
+            self.calls.append(call)
         return self
 
     def call(self):

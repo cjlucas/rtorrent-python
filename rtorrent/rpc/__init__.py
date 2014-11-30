@@ -1,7 +1,9 @@
-from rtorrent.rpc.method import RPCMethod
+from rtorrent.rpc.method import RPCMethod, PsuedoRPCMethod
 from rtorrent.context import RTContext
 from rtorrent.rpc.call import RPCCall
 from rtorrent.rpc.caller import RPCCaller
+
+import types
 
 class RPCObject(object):
     _rpc_methods = {}
@@ -17,6 +19,16 @@ class RPCObject(object):
         setattr(cls, key, single_rpc_call)
 
     @classmethod
+    def register_psuedo_rpc_method(cls, key, rpc_method_keys, input_handler, output_handler):
+        rpc_methods = {k: cls._rpc_methods[cls][k] for k in rpc_method_keys}
+        cls._rpc_methods[cls][key] = PsuedoRPCMethod(rpc_methods,
+                                                     input_handler,
+                                                     output_handler)
+
+        simple_rpc_call = lambda self, *args: self.exec_rpc_call(key, *args)
+        setattr(cls, key, simple_rpc_call)
+
+    @classmethod
     def get_rpc_methods(cls) -> dict:
         return dict(cls._rpc_methods[cls])
 
@@ -25,7 +37,10 @@ class RPCObject(object):
 
     def rpc_call(self, key, *args) -> RPCCall:
         rpc_method = self._get_rpc_method(key)
-        return RPCCall(rpc_method, *args)
+        if isinstance(rpc_method, RPCMethod):
+            return RPCCall(rpc_method, *args)
+        elif isinstance(rpc_method, PsuedoRPCMethod):
+            return RPCCall(*rpc_method.input_handler(*args)[0])
 
     def exec_rpc_call(self, key, *args):
         return RPCCaller(self.context)\

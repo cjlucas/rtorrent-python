@@ -62,6 +62,10 @@ Torrent.register_rpc_method("get_priority", "d.get_priority",
                                              _VALID_TORRENT_PRIORITIES[x]])
 Torrent.register_rpc_method("is_accepting_seeders", "d.accepting_seeders",
                             boolean=True)
+Torrent.register_rpc_method('enable_accepting_seeders',
+                            'd.accepting_seeders.enable')
+Torrent.register_rpc_method('disable_accepting_seeders',
+                            'd.accepting_seeders.disable')
 Torrent.register_rpc_method('get_upload_rate',
                             ['d.up.rate', 'd.get_up_rate'])
 Torrent.register_rpc_method('get_download_rate',
@@ -88,3 +92,15 @@ Torrent.register_rpc_method('get_size_pex',
                             ['d.size_pex', 'd.get_size_pex'])
 Torrent.register_rpc_method('get_chunk_size',
                             ['d.chunk_size', 'd.get_chunk_size'])
+
+def _enable_accepting_seeders_input_handler(self, *args):
+    k = 'enable_accepting_seeders' if args[0] else 'disable_accepting_seeders'
+    return [(self.rpc_methods[k], tuple())]
+
+_enable_accepting_seeders_output_handler = lambda *args: args[0]
+
+Torrent.register_psuedo_rpc_method('accept_seeders',
+                                   ['enable_accepting_seeders',
+                                    'disable_accepting_seeders'],
+                                   _enable_accepting_seeders_input_handler,
+                                   _enable_accepting_seeders_output_handler)

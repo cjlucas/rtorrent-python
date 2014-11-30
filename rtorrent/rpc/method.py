@@ -1,4 +1,5 @@
 import re
+import types
 
 METHOD_TYPE_RETRIEVER = 0
 METHOD_TYPE_MODIFIER = 1
@@ -71,3 +72,10 @@ class RPCMethod(object):
                             .format(self.method_names))
 
         return match.groups(-1)
+
+class PsuedoRPCMethod(object):
+    def __init__(self, rpc_methods, input_handler, output_handler):
+        self.rpc_methods = rpc_methods
+        self.input_handler = types.MethodType(input_handler, self)
+        self.output_handler = types.MethodType(output_handler, self)
+
