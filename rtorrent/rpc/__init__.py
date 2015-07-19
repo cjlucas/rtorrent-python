@@ -38,23 +38,24 @@ class RPCObject(object):
         return rpc_method
 
 class BaseMulticallBuilder(object):
+    __metadata_cls__ = None
+    __rpc_object_cls__ = None
+    __multicall_rpc_method__ = None
+
     def __init__(self, context: RTContext):
         self.keys = []
         self.args = []
         self.context = context
         self.available_methods = self.context.get_available_rpc_methods()
-        self.metadata_cls = None # TODO: set to Metadata
-        self.multicall_rpc_method = None
-        self.rpc_object_class = None
 
     def call(self):
         caller = RPCCaller(self.context)
 
-        rpc_methods = list(map(lambda x: self.rpc_object_class.get_rpc_methods()[x], self.keys))
+        rpc_methods = list(map(lambda x: self.__rpc_object_cls__.get_rpc_methods()[x], self.keys))
         mapper = lambda x:\
             x.get_available_method_name(self.context.get_available_rpc_methods()) + '='
         self.args.extend(map(mapper, rpc_methods))
-        results = caller.add(self.multicall_rpc_method, *self.args).call()[0]
+        results = caller.add(self.__multicall_rpc_method__, *self.args).call()[0]
 
         metadata_list = []
         for res in results:
@@ -65,7 +66,7 @@ class BaseMulticallBuilder(object):
 
                 metadata[self.keys[i]] = r
 
-            metadata_list.append(self.metadata_cls(metadata))
+            metadata_list.append(self.__metadata_cls__(metadata))
 
         return tuple(metadata_list)
 
@@ -78,7 +79,7 @@ class BaseMulticallBuilder(object):
         return inner
 
     def _assert_valid_rpc_method(self, key):
-        method = self.rpc_object_class.get_rpc_methods().get(key)
+        method = self.__rpc_object_cls__.get_rpc_methods().get(key)
         if method is None:
             raise RuntimeError("No method with key '{0}' found.".format(key))
         if not method.is_available(self.available_methods):

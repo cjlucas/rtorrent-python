@@ -19,7 +19,7 @@ class Torrent(RPCObject):
 
     def get_file_metadata(self):
         return rtorrent.file.FileMulticallBuilder(self.context, self) \
-            .get_size() \
+            .get_size_bytes() \
             .get_priority() \
             .get_path() \
             .call()
@@ -28,17 +28,6 @@ class Torrent(RPCObject):
         return "Torrent(info_hash={0})".format(self.info_hash)
 
 
-class TorrentMulticallBuilder(BaseMulticallBuilder):
-    def __init__(self, context, view):
-        super().__init__(context)
-        if view is None:
-            view = 'main'
-        self.keys.insert(0, 'get_info_hash')
-        self.args.insert(0, [view])
-        self.multicall_rpc_method = 'd.multicall'
-        self.rpc_object_class = Torrent
-        self.metadata_cls = TorrentMetadata
-
 
 class TorrentMetadata(object):
     def __init__(self, results: dict):
@@ -46,6 +35,19 @@ class TorrentMetadata(object):
 
     def __getattr__(self, item):
         return lambda: self.results[item]
+
+
+class TorrentMulticallBuilder(BaseMulticallBuilder):
+    __metadata_cls__ = TorrentMetadata
+    __rpc_object_cls__ = Torrent
+    __multicall_rpc_method__ = 'd.multicall'
+
+    def __init__(self, context, view):
+        super().__init__(context)
+        if view is None:
+            view = 'main'
+        self.keys.insert(0, 'get_info_hash')
+        self.args.insert(0, [view])
 
 
 _VALID_TORRENT_PRIORITIES = ['off', 'low', 'normal', 'high']

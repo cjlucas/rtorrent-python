@@ -13,20 +13,21 @@ class File(RPCObject):
         return call
 
 
-class FileMulticallBuilder(BaseMulticallBuilder):
-    def __init__(self, context, torrent):
-        super().__init__(context)
-        self.args.extend([torrent.get_info_hash(), ''])
-        self.multicall_rpc_method = 'f.multicall'
-        self.rpc_object_class = File
-        self.metadata_cls = FileMetadata
-
 class FileMetadata(object):
     def __init__(self, results: dict):
         self.results = results
 
     def __getattr__(self, item):
         return lambda: self.results[item]
+
+class FileMulticallBuilder(BaseMulticallBuilder):
+    __metadata_cls__ = FileMetadata
+    __rpc_object_cls__ = File
+    __multicall_rpc_method__ = 'f.multicall'
+
+    def __init__(self, context, torrent):
+        super().__init__(context)
+        self.args.extend([torrent.get_info_hash(), ''])
 
 _VALID_FILE_PRIORITiES = ['off', 'normal', 'high']
 
