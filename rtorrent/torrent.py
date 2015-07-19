@@ -18,11 +18,13 @@ class Torrent(RPCObject):
         return call
 
     def get_file_metadata(self):
-        return rtorrent.file.FileMulticallBuilder(self.context, self) \
-            .get_size_bytes() \
-            .get_priority() \
-            .get_path() \
-            .call()
+        builder = rtorrent.file.FileMulticallBuilder(self.context, self)
+
+        for key, rpc_method in rtorrent.file.File.get_rpc_methods().items():
+            if rpc_method.is_retriever():
+                getattr(builder, key)()
+
+        return builder.call()
 
     def __str__(self):
         return "Torrent(info_hash={0})".format(self.info_hash)
@@ -62,3 +64,29 @@ Torrent.register_rpc_method("get_priority", "d.get_priority",
                                              _VALID_TORRENT_PRIORITIES[x]])
 Torrent.register_rpc_method("is_accepting_seeders", "d.accepting_seeders",
                             boolean=True)
+Torrent.register_rpc_method('get_upload_rate',
+                            ['d.up.rate', 'd.get_up_rate'])
+Torrent.register_rpc_method('get_download_rate',
+                            ['d.down.rate', 'd.get_down_rate'])
+Torrent.register_rpc_method('get_skip_rate',
+                            ['d.skip.rate', 'd.get_skip_rate'])
+Torrent.register_rpc_method('get_upload_total',
+                            ['d.up.total', 'd.get_up_total'])
+Torrent.register_rpc_method('get_download_total',
+                            ['d.down.total', 'd.get_down_total'])
+Torrent.register_rpc_method('get_skip_total',
+                            ['d.skip.total', 'd.get_skip_total'])
+Torrent.register_rpc_method('get_timestamp_started', 'd.timestamp.started',
+                            post_processors=[to_datetime])
+Torrent.register_rpc_method('get_timestamp_finished', 'd.timestamp.finished',
+                            post_processors=[to_datetime])
+Torrent.register_rpc_method('get_size_bytes',
+                            ['d.size_bytes', 'd.get_size_bytes'])
+Torrent.register_rpc_method('get_size_chunkss',
+                            ['d.size_chunks', 'd.get_size_chunks'])
+Torrent.register_rpc_method('get_size_files',
+                            ['d.size_files', 'd.get_size_files'])
+Torrent.register_rpc_method('get_size_pex',
+                            ['d.size_pex', 'd.get_size_pex'])
+Torrent.register_rpc_method('get_chunk_size',
+                            ['d.chunk_size', 'd.get_chunk_size'])

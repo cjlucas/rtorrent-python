@@ -2,7 +2,6 @@ from rtorrent.rpc.processors import *
 
 from nose.tools import *
 
-
 def test_valmap1():
     mapper = valmap([0, 1, 2, 3], ['off', 'low', 'normal', 'high'])
     eq_(mapper(1), ['low'])
@@ -39,7 +38,11 @@ def test_check_success():
     eq_(check_success(0), True)
     eq_(check_success(-1), False)
 
-def test_to_datetime():
-    input = 1414776586757462
-    expected = datetime(2014, 10, 31, 10, 29, 46, 757462)
-    eq_(to_datetime(input), expected)
+def test_to_datetime1():
+    input_ = 1414963929334259
+    expected = datetime.datetime(2014, 11, 2, 21, 32, 9, 334259,
+                                 tzinfo=datetime.timezone.utc)
+    eq_(to_datetime(input_), expected)
+
+def test_to_datetime2():
+    eq_(to_datetime(0), None)
