@@ -29,7 +29,7 @@ class FileMulticallBuilder(BaseMulticallBuilder):
         super().__init__(context)
         self.args.extend([torrent.get_info_hash(), ''])
 
-_VALID_FILE_PRIORITiES = ['off', 'normal', 'high']
+_VALID_FILE_PRIORITIES = ['off', 'normal', 'high']
 
 File.register_rpc_method('get_size_bytes',
                          ['f.get_size_bytes', 'f.size_bytes'])
