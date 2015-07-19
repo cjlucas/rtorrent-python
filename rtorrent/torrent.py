@@ -2,6 +2,7 @@ from rtorrent.rpc import RPCObject
 from rtorrent.rpc.method import check_success
 from rtorrent.rpc.caller import RPCCaller
 from rtorrent.rpc import BaseMulticallBuilder
+from rtorrent.tracker import Tracker, TrackerMulticallBuilder
 import rtorrent.file
 
 from rtorrent.rpc.processors import *
@@ -18,17 +19,23 @@ class Torrent(RPCObject):
         return call
 
     def get_file_metadata(self):
-        builder = rtorrent.file.FileMulticallBuilder(self.context, self)
+        return rtorrent.file.FileMulticallBuilder(self.context, self).call()
 
-        for key, rpc_method in rtorrent.file.File.get_rpc_methods().items():
-            if rpc_method.is_retriever():
-                getattr(builder, key)()
+    def get_tracker_metadata(self):
+        return TrackerMulticallBuilder(self.context, self).call()
 
-        return builder.call()
+    def get_trackers(self):
+        results = TrackerMulticallBuilder(self.context, self) \
+                .get_group() \
+                .call()
+
+        trackers = [Tracker(self.context, self.info_hash, r.get_group())
+                for r in results]
+
+        return tuple(trackers)
 
     def __str__(self):
-        return "Torrent(info_hash={0})".format(self.info_hash)
-
+        return "Torrent(info_hash=\"{0}\")".format(self.info_hash)
 
 
 class TorrentMetadata(object):
@@ -55,6 +62,7 @@ class TorrentMulticallBuilder(BaseMulticallBuilder):
 _VALID_TORRENT_PRIORITIES = ['off', 'low', 'normal', 'high']
 
 Torrent.register_rpc_method('get_info_hash', 'd.get_hash')
+
 Torrent.register_rpc_method("set_priority", "d.set_priority",
                             pre_processors=[valmap(_VALID_TORRENT_PRIORITIES,
                                                    range(0, 4), 1)],

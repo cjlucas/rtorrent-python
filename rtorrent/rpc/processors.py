@@ -30,6 +30,20 @@ def bool_to_int(arg):
 def check_success(arg):
     return arg == 0
 
+def us_to_datetime(arg):
+    return to_datetime(arg)
+
+def s_to_datetime(arg):
+    # Return None if RTorrent returns a timestamp of zero
+    if arg <= 0:
+        return None
+    
+    # RTorrent timestamps are converted to UTC
+    # utcfromtimestamp will return a generic datetime object
+    # without a timezone associated with it
+    return datetime.datetime.utcfromtimestamp(arg) \
+        .replace(tzinfo=datetime.timezone.utc)
+
 def to_datetime(arg):
     # Return None if RTorrent returns a timestamp of zero
     if arg <= 0:

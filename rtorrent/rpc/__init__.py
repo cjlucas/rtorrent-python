@@ -48,7 +48,11 @@ class BaseMulticallBuilder(object):
         self.context = context
         self.available_methods = self.context.get_available_rpc_methods()
 
+
     def call(self):
+        if len(self.keys) == 0:
+            self._add_all_rpc_methods()
+
         caller = RPCCaller(self.context)
 
         rpc_methods = list(map(lambda x: self.__rpc_object_cls__.get_rpc_methods()[x], self.keys))
@@ -86,6 +90,13 @@ class BaseMulticallBuilder(object):
             raise RuntimeError("Method with key '{0}' is unavailable".format(key))
         if not method.is_retriever():
             raise RuntimeError("Modifier method with key '{0}' is not allowed".format(key))
+    
+    def _add_all_rpc_methods(self):
+        for key, rpc_method in self.__rpc_object_cls__.get_rpc_methods().items():
+            if rpc_method.is_retriever():
+                getattr(self, key)()
+
+        return self
 
     def _add_rpc_method(self, key):
         self.keys.append(key)
